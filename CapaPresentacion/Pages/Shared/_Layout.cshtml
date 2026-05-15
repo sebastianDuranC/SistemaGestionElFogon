@@ -1,0 +1,295 @@
+﻿<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>El Fogón</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
+    <link href="~/logo.ico" rel="icon" />
+    <link rel="stylesheet" href="/css/output.css" asp-append-version="true">
+    <link rel="stylesheet" href="/css/style.css" asp-append-version="true" />
+</head>
+<body class="overflow-x-hidden bg-[#f5f5f7] text-zinc-900 antialiased">
+    <style>
+            body {
+                font-family: 'Inter', sans-serif;
+            }
+    </style>
+    <!-- NAVBAR -->
+    <header class="sticky top-0 z-50 border-b border-zinc-200/90 bg-white/90 backdrop-blur-md">
+        <div class="mx-auto max-w-[1600px] px-4 md:px-6">
+            <div class="flex h-[78px] items-center justify-between gap-4">
+                <!-- LEFT -->
+                <div class="flex min-w-0 flex-1 items-center gap-8">
+                    <!-- LOGO -->
+                    <a asp-page="" class="shrink-0">
+                        <div class="leading-none" aria-label="Inicio">
+                            <img src="/logo.png" alt="Logo del fogón" class="h-10 w-auto" />
+                        </div>
+                    </a>
+                    <!-- NAV -->
+                    <nav class="hidden items-center gap-1 md:flex">
+                        <!-- DASHBOARD -->
+                        <a asp-page="/Index"
+                           class="relative rounded-lg px-3 py-2 text-[15px] font-semibold text-red-500 transition-colors">
+                            Dashboard
+                            <span class="absolute right-3 bottom-0 left-3 h-[2px] rounded-full bg-red-500"></span>
+                        </a>
+                        <!-- ADMINISTRACION -->
+                        <div class="relative" data-dropdown="administracion">
+                            <button type="button"
+                                    data-dropdown-trigger
+                                    aria-expanded="false"
+                                    aria-controls="menu-administracion"
+                                    class="group flex items-center gap-1 rounded-lg px-3 py-2 text-[15px] font-medium text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-900">
+                                Acceso y Administración
+                                <svg data-dropdown-icon
+                                     class="h-4 w-4 transition-transform duration-200"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     viewBox="0 0 24 24">
+                                    <path stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                          stroke-width="2"
+                                          d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div id="menu-administracion"
+                                 data-dropdown-menu
+                                 class="invisible pointer-events-none absolute top-full left-0 z-50 mt-2 w-64 -translate-y-2 rounded-xl border border-zinc-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-200 ease-out">
+                                <a href="#"
+                                   class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                    Usuarios
+                                </a>
+                                <a href="#"
+                                   class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                    Roles
+                                </a>
+                                <a href="#"
+                                   class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                    Permisos
+                                </a>
+                            </div>
+                        </div>
+                        <!-- COMPRAS -->
+                        <div class="relative" data-dropdown="compras">
+                            <button type="button"
+                                    data-dropdown-trigger
+                                    aria-expanded="false"
+                                    aria-controls="menu-compras"
+                                    class="group flex items-center gap-1 rounded-lg px-3 py-2 text-[15px] font-medium text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-900">
+                                Compras
+                                <svg data-dropdown-icon
+                                     class="h-4 w-4 transition-transform duration-200"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     viewBox="0 0 24 24">
+                                    <path stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                          stroke-width="2"
+                                          d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div id="menu-compras"
+                                 data-dropdown-menu
+                                 class="invisible pointer-events-none absolute top-full left-0 z-50 mt-2 w-56 -translate-y-2 rounded-xl border border-zinc-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-200 ease-out">
+                                <a href="#"
+                                   class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                    Ordenes de compra
+                                </a>
+                                <a href="#"
+                                   class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                    Proveedores
+                                </a>
+                            </div>
+                        </div>
+                        <!-- CAJA -->
+                        <div class="relative" data-dropdown="caja">
+                            <button type="button"
+                                    data-dropdown-trigger
+                                    aria-expanded="false"
+                                    aria-controls="menu-caja"
+                                    class="group flex items-center gap-1 rounded-lg px-3 py-2 text-[15px] font-medium text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-900">
+                                Caja
+                                <svg data-dropdown-icon
+                                     class="h-4 w-4 transition-transform duration-200"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     viewBox="0 0 24 24">
+                                    <path stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                          stroke-width="2"
+                                          d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div id="menu-caja"
+                                 data-dropdown-menu
+                                 class="invisible pointer-events-none absolute top-full left-0 z-50 mt-2 w-56 -translate-y-2 rounded-xl border border-zinc-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-200 ease-out">
+                                <a href="#"
+                                   class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                    Apertura de caja
+                                </a>
+                                <a href="#"
+                                   class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                    Cierre de caja
+                                </a>
+                            </div>
+                        </div>
+                        <!-- VENTAS -->
+                        <div class="relative" data-dropdown="ventas">
+                            <button type="button"
+                                    data-dropdown-trigger
+                                    aria-expanded="false"
+                                    aria-controls="menu-ventas"
+                                    class="group flex items-center gap-1 rounded-lg px-3 py-2 text-[15px] font-medium text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-900">
+                                Ventas
+                                <svg data-dropdown-icon
+                                     class="h-4 w-4 transition-transform duration-200"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     viewBox="0 0 24 24">
+                                    <path stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                          stroke-width="2"
+                                          d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div id="menu-ventas"
+                                 data-dropdown-menu
+                                 class="invisible pointer-events-none absolute top-full left-0 z-50 mt-2 w-64 -translate-y-2 rounded-xl border border-zinc-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-200 ease-out">
+                                <a href="#"
+                                   class="block rounded-lg bg-zinc-100 px-3 py-2.5 text-sm font-semibold text-zinc-900">
+                                    Ventas
+                                </a>
+                                <a href="#"
+                                   class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                    Clientes
+                                </a>
+                                <a href="#"
+                                   class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                    Productos
+                                </a>
+                                <a href="#"
+                                   class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                    Categorías
+                                </a>
+                                <a href="#"
+                                   class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                    Método de pago
+                                </a>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+                <!-- RIGHT -->
+                <div class="flex shrink-0 items-center gap-4 md:gap-5">
+                    <!-- NOTIFICATIONS -->
+                    <button class="relative flex h-9 w-9 items-center justify-center rounded-lg text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900"
+                            aria-label="Notificaciones">
+                        <svg class="h-5 w-5"
+                             fill="none"
+                             stroke="currentColor"
+                             viewBox="0 0 24 24">
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                        </svg>
+                    </button>
+                    <div class="h-8 w-px bg-zinc-200"></div>
+                    <!-- USER -->
+                    <div class="hidden items-center gap-3 md:flex">
+                        <div class="text-right leading-tight">
+                            <p class="text-sm font-semibold text-zinc-900">
+                                Admin User
+                            </p>
+                            <p class="mt-0.5 text-xs text-zinc-500">
+                                Administrador
+                            </p>
+                        </div>
+                        <button class="cursor-pointer rounded-md bg-black px-4 py-2 text-xs font-semibold tracking-wide text-white transition hover:bg-zinc-800">
+                            CERRAR SESIÓN
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- CONTENT -->
+    <main class="animate-fade mx-auto max-w-[1600px] bg-neutral px-4 py-8 md:px-6 md:py-10">
+        <!-- PAGE CONTENT -->
+        <div>
+            @RenderBody()
+        </div>
+    </main>
+    <script>
+        // Controla apertura y cierre de cada dropdown del navbar.
+        (() => {
+            const dropdowns = document.querySelectorAll("[data-dropdown]");
+            if (!dropdowns.length) return;
+
+            // Cierra todos los menús, excepto uno opcional.
+            const closeAll = (exceptId = null) => {
+                dropdowns.forEach((dropdown) => {
+                    if (exceptId && dropdown.dataset.dropdown === exceptId) return;
+
+                    const trigger = dropdown.querySelector("[data-dropdown-trigger]");
+                    const menu = dropdown.querySelector("[data-dropdown-menu]");
+                    const icon = dropdown.querySelector("[data-dropdown-icon]");
+
+                    if (!trigger || !menu) return;
+
+                    trigger.setAttribute("aria-expanded", "false");
+                    menu.classList.add("invisible", "pointer-events-none", "-translate-y-2", "opacity-0");
+                    menu.classList.remove("visible", "pointer-events-auto", "translate-y-0", "opacity-100");
+                    icon?.classList.remove("rotate-180");
+                });
+            };
+
+            dropdowns.forEach((dropdown) => {
+                const trigger = dropdown.querySelector("[data-dropdown-trigger]");
+                const menu = dropdown.querySelector("[data-dropdown-menu]");
+                const icon = dropdown.querySelector("[data-dropdown-icon]");
+
+                if (!trigger || !menu) return;
+
+                // Alterna el menú actual y cierra el resto.
+                trigger.addEventListener("click", (event) => {
+                    event.preventDefault();
+                    const isOpen = trigger.getAttribute("aria-expanded") === "true";
+
+                    closeAll(dropdown.dataset.dropdown);
+
+                    if (isOpen) {
+                        trigger.setAttribute("aria-expanded", "false");
+                        menu.classList.add("invisible", "pointer-events-none", "-translate-y-2", "opacity-0");
+                        menu.classList.remove("visible", "pointer-events-auto", "translate-y-0", "opacity-100");
+                        icon?.classList.remove("rotate-180");
+                        return;
+                    }
+
+                    trigger.setAttribute("aria-expanded", "true");
+                    menu.classList.remove("invisible", "pointer-events-none", "-translate-y-2", "opacity-0");
+                    menu.classList.add("visible", "pointer-events-auto", "translate-y-0", "opacity-100");
+                    icon?.classList.add("rotate-180");
+                });
+            });
+
+            // Cierra menús al hacer clic fuera del navbar.
+            document.addEventListener("click", (event) => {
+                if (event.target.closest("[data-dropdown]")) return;
+                closeAll();
+            });
+
+            // Cierra menús con la tecla Escape.
+            document.addEventListener("keydown", (event) => {
+                if (event.key === "Escape") closeAll();
+            });
+        })();
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

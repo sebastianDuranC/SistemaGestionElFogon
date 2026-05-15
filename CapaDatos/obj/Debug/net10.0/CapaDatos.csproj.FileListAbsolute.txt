@@ -1,0 +1,12 @@
+C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\CapaDatos\bin\Debug\net10.0\CapaDatos.deps.json
+C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\CapaDatos\bin\Debug\net10.0\CapaDatos.dll
+C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\CapaDatos\bin\Debug\net10.0\CapaDatos.pdb
+C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\CapaDatos\obj\Debug\net10.0\CapaDatos.csproj.AssemblyReference.cache
+C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\CapaDatos\obj\Debug\net10.0\CapaDatos.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\CapaDatos\obj\Debug\net10.0\CapaDatos.AssemblyInfoInputs.cache
+C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\CapaDatos\obj\Debug\net10.0\CapaDatos.AssemblyInfo.cs
+C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\CapaDatos\obj\Debug\net10.0\CapaDatos.csproj.CoreCompileInputs.cache
+C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\CapaDatos\obj\Debug\net10.0\CapaDatos.dll
+C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\CapaDatos\obj\Debug\net10.0\refint\CapaDatos.dll
+C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\CapaDatos\obj\Debug\net10.0\CapaDatos.pdb
+C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\CapaDatos\obj\Debug\net10.0\ref\CapaDatos.dll

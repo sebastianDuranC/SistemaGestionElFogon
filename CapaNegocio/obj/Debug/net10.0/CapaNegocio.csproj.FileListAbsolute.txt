@@ -1,0 +1,12 @@
+C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\CapaNegocio\bin\Debug\net10.0\CapaNegocio.deps.json
+C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\CapaNegocio\bin\Debug\net10.0\CapaNegocio.dll
+C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\CapaNegocio\bin\Debug\net10.0\CapaNegocio.pdb
+C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\CapaNegocio\obj\Debug\net10.0\CapaNegocio.csproj.AssemblyReference.cache
+C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\CapaNegocio\obj\Debug\net10.0\CapaNegocio.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\CapaNegocio\obj\Debug\net10.0\CapaNegocio.AssemblyInfoInputs.cache
+C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\CapaNegocio\obj\Debug\net10.0\CapaNegocio.AssemblyInfo.cs
+C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\CapaNegocio\obj\Debug\net10.0\CapaNegocio.csproj.CoreCompileInputs.cache
+C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\CapaNegocio\obj\Debug\net10.0\CapaNegocio.dll
+C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\CapaNegocio\obj\Debug\net10.0\refint\CapaNegocio.dll
+C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\CapaNegocio\obj\Debug\net10.0\CapaNegocio.pdb
+C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\CapaNegocio\obj\Debug\net10.0\ref\CapaNegocio.dll

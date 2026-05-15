@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+@theme {
+    --color-primary: #080708; /*Negro: botones negacion y texto*/
+    --color-secondary: #F8961E; /*Rojo: Titulo y efectos*/
+    --color-tertiary: #F8961E; /*Naranja: Botones secundario*/
+    --color-neutral: #E6E8E6; /*Gris: Fondo y elementos neutros*/
+}
