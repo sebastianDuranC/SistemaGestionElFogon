@@ -1,0 +1,49 @@
+﻿@page
+@model CapaPresentacion.Pages.Acceso.LoginModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>Login</title>
+    <link href="/css/output.css" rel="stylesheet" />
+</head>
+<body class="flex min-h-screen items-center justify-center bg-gray-100">
+    <div class="w-96 rounded-lg bg-white p-8 shadow-lg">
+        <h1 class="mb-6 text-center text-2xl font-bold text-gray-800">
+            Inicio de Sesión
+        </h1>
+        <form method="post">
+            <div class="mb-4">
+                <label class="mb-1 block text-sm font-medium text-gray-700">
+                    Usuario
+                </label>
+                <input asp-for="Nombre"
+                       class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
+                       placeholder="Ingrese su nombre de usuario" />
+            </div>
+            <div class="mb-4">
+                <label class="mb-1 block text-sm font-medium text-gray-700">
+                    Contraseña
+                </label>
+                <input asp-for="Contra"
+                       type="password"
+                       class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
+                       placeholder="Ingrese su contraseña" />
+            </div>
+            @if (!string.IsNullOrEmpty(Model.MensajeError))
+            {
+                <div class="mb-4 rounded border border-red-400 bg-red-100 p-3 text-red-700">
+                    @Model.MensajeError
+                </div>
+            }
+            <button type="submit"
+                    class="w-full rounded-lg bg-red-600 py-2 text-white transition hover:bg-red-700">
+                Ingresar al Sistema
+            </button>
+        </form>
+    </div>
+</body>
+</html>

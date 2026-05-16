@@ -1,26 +1,36 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using CapaDatos;
+using CapaPresentacion.Middlewares;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// 1. Configurar cadena de conexión global
+ConexionDAL.CadenaConexion = builder.Configuration.GetConnectionString("ElFogonBD");
+
+// 2. Configurar Cookie Authentication
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(Opciones =>
+    {
+        Opciones.LoginPath = "/Acceso/Login";         // Si no está logueado
+        Opciones.AccessDeniedPath = "/Acceso/AccesoDenegado"; // Si no tiene permiso
+        Opciones.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+        Opciones.SlidingExpiration = true; // Renueva cookie si hay actividad
+    });
+
+builder.Services.AddAuthorization();
+
+// 3. Registrar Razor Pages
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
-
-app.UseHttpsRedirection();
-
+app.UseStaticFiles();
 app.UseRouting();
 
+//primero Authentication, luego Authorization
+app.UseAuthentication();
+app.UseMiddleware<VerificadorPermisosMiddleware>();
 app.UseAuthorization();
 
-app.MapStaticAssets();
-app.MapRazorPages()
-   .WithStaticAssets();
-
+app.MapRazorPages();
 app.Run();

@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+<!DOCTYPE html>
 <html lang="es" class="scroll-smooth">
 <head>
     <meta charset="utf-8" />
@@ -34,7 +35,7 @@
                     <nav class="hidden items-center gap-1 md:flex">
                         <!-- DASHBOARD -->
                         <a asp-page="/Index"
-                           class="relative rounded-lg px-3 py-2 text-[15px] font-semibold text-red-500 transition-colors">
+                           class="relative rounded-lg px-3 py-2 font-semibold text-[15px] text-red-500 transition-colors">
                             Dashboard
                             <span class="absolute right-3 bottom-0 left-3 h-[2px] rounded-full bg-red-500"></span>
                         </a>
@@ -44,7 +45,7 @@
                                     data-dropdown-trigger
                                     aria-expanded="false"
                                     aria-controls="menu-administracion"
-                                    class="group flex items-center gap-1 rounded-lg px-3 py-2 text-[15px] font-medium text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-900">
+                                    class="group flex items-center gap-1 rounded-lg px-3 py-2 font-medium text-[15px] text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-900">
                                 Acceso y Administración
                                 <svg data-dropdown-icon
                                      class="h-4 w-4 transition-transform duration-200"
@@ -59,8 +60,8 @@
                             </button>
                             <div id="menu-administracion"
                                  data-dropdown-menu
-                                 class="invisible pointer-events-none absolute top-full left-0 z-50 mt-2 w-64 -translate-y-2 rounded-xl border border-zinc-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-200 ease-out">
-                                <a href="#"
+                                 class="pointer-events-none invisible absolute top-full left-0 z-50 mt-2 w-64 -translate-y-2 rounded-xl border border-zinc-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-200 ease-out">
+                                <a asp-page="Usuario/Index"
                                    class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
                                     Usuarios
                                 </a>
@@ -68,9 +69,13 @@
                                    class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
                                     Roles
                                 </a>
-                                <a href="#"
+                                @* <a href="#"
                                    class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
                                     Permisos
+                                </a> *@
+                                <a href="#"
+                                   class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                    Negocio
                                 </a>
                             </div>
                         </div>
@@ -80,7 +85,7 @@
                                     data-dropdown-trigger
                                     aria-expanded="false"
                                     aria-controls="menu-compras"
-                                    class="group flex items-center gap-1 rounded-lg px-3 py-2 text-[15px] font-medium text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-900">
+                                    class="group flex items-center gap-1 rounded-lg px-3 py-2 font-medium text-[15px] text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-900">
                                 Compras
                                 <svg data-dropdown-icon
                                      class="h-4 w-4 transition-transform duration-200"
@@ -95,7 +100,7 @@
                             </button>
                             <div id="menu-compras"
                                  data-dropdown-menu
-                                 class="invisible pointer-events-none absolute top-full left-0 z-50 mt-2 w-56 -translate-y-2 rounded-xl border border-zinc-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-200 ease-out">
+                                 class="pointer-events-none invisible absolute top-full left-0 z-50 mt-2 w-56 -translate-y-2 rounded-xl border border-zinc-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-200 ease-out">
                                 <a href="#"
                                    class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
                                     Ordenes de compra
@@ -112,7 +117,7 @@
                                     data-dropdown-trigger
                                     aria-expanded="false"
                                     aria-controls="menu-caja"
-                                    class="group flex items-center gap-1 rounded-lg px-3 py-2 text-[15px] font-medium text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-900">
+                                    class="group flex items-center gap-1 rounded-lg px-3 py-2 font-medium text-[15px] text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-900">
                                 Caja
                                 <svg data-dropdown-icon
                                      class="h-4 w-4 transition-transform duration-200"
@@ -127,7 +132,7 @@
                             </button>
                             <div id="menu-caja"
                                  data-dropdown-menu
-                                 class="invisible pointer-events-none absolute top-full left-0 z-50 mt-2 w-56 -translate-y-2 rounded-xl border border-zinc-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-200 ease-out">
+                                 class="pointer-events-none invisible absolute top-full left-0 z-50 mt-2 w-56 -translate-y-2 rounded-xl border border-zinc-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-200 ease-out">
                                 <a href="#"
                                    class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
                                     Apertura de caja
@@ -144,7 +149,7 @@
                                     data-dropdown-trigger
                                     aria-expanded="false"
                                     aria-controls="menu-ventas"
-                                    class="group flex items-center gap-1 rounded-lg px-3 py-2 text-[15px] font-medium text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-900">
+                                    class="group flex items-center gap-1 rounded-lg px-3 py-2 font-medium text-[15px] text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-900">
                                 Ventas
                                 <svg data-dropdown-icon
                                      class="h-4 w-4 transition-transform duration-200"
@@ -159,7 +164,7 @@
                             </button>
                             <div id="menu-ventas"
                                  data-dropdown-menu
-                                 class="invisible pointer-events-none absolute top-full left-0 z-50 mt-2 w-64 -translate-y-2 rounded-xl border border-zinc-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-200 ease-out">
+                                 class="pointer-events-none invisible absolute top-full left-0 z-50 mt-2 w-64 -translate-y-2 rounded-xl border border-zinc-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-200 ease-out">
                                 <a href="#"
                                    class="block rounded-lg bg-zinc-100 px-3 py-2.5 text-sm font-semibold text-zinc-900">
                                     Ventas
@@ -204,15 +209,17 @@
                     <div class="hidden items-center gap-3 md:flex">
                         <div class="text-right leading-tight">
                             <p class="text-sm font-semibold text-zinc-900">
-                                Admin User
+                                @User.Identity.Name
                             </p>
                             <p class="mt-0.5 text-xs text-zinc-500">
-                                Administrador
+                                
                             </p>
                         </div>
-                        <button class="cursor-pointer rounded-md bg-black px-4 py-2 text-xs font-semibold tracking-wide text-white transition hover:bg-zinc-800">
-                            CERRAR SESIÓN
-                        </button>
+                        <form method="post" asp-page="/Acceso/Logout" class="inline">
+                            <button type="submit" class="cursor-pointer rounded-md bg-black px-4 py-2 text-xs font-semibold tracking-wide text-white transition hover:bg-zinc-800">
+                                CERRAR SESIÓN
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -221,7 +228,7 @@
     <!-- CONTENT -->
     <main class="animate-fade mx-auto max-w-[1600px] bg-neutral px-4 py-8 md:px-6 md:py-10">
         <!-- PAGE CONTENT -->
-        <div>
+        <div class="container mx-auto p-6">
             @RenderBody()
         </div>
     </main>

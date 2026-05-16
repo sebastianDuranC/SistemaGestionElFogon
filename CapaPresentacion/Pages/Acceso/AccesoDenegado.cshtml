@@ -1,0 +1,42 @@
+﻿@page
+@model CapaPresentacion.Pages.Acceso.AccesoDenegadoModel
+@{
+    
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>Acceso Denegado</title>
+    <link href="/css/output.css" rel="stylesheet" />
+</head>
+<body class="flex min-h-screen items-center justify-center bg-gray-100">
+
+    <div class="max-w-md rounded-lg bg-white p-10 text-center shadow-lg">
+
+        <!-- Ícono de prohibido -->
+        <div class="mb-6">
+            <svg class="mx-auto h-20 w-20 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
+            </svg>
+        </div>
+
+        <h1 class="mb-4 text-3xl font-bold text-gray-800">
+            Acceso Denegado
+        </h1>
+
+        <p class="mb-8 text-gray-600">
+            No tienes permisos para acceder a esta sección. Contacta al administrador si crees que esto es un error.
+        </p>
+
+        <!-- Botón de regreso -->
+        <a asp-page="/Index"
+           class="inline-block rounded-lg bg-red-600 px-6 py-3 text-white transition hover:bg-red-700">
+            Volver al Dashboard
+        </a>
+
+    </div>
+
+</body>
+</html>
