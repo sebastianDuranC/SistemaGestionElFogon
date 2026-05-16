@@ -5,6 +5,7 @@ C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\Entidades\obj\Debug\net10.0\
 C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\Entidades\obj\Debug\net10.0\Entidades.AssemblyInfoInputs.cache
 C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\Entidades\obj\Debug\net10.0\Entidades.AssemblyInfo.cs
 C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\Entidades\obj\Debug\net10.0\Entidades.csproj.CoreCompileInputs.cache
+C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\Entidades\obj\Debug\net10.0\Entidades.sourcelink.json
 C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\Entidades\obj\Debug\net10.0\Entidades.dll
 C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\Entidades\obj\Debug\net10.0\refint\Entidades.dll
 C:\Users\sd858\OneDrive\Escritorio\RazorPageElFogon\Entidades\obj\Debug\net10.0\Entidades.pdb

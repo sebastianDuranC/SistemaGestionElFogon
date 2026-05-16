@@ -461,6 +461,16 @@
         "build": {
           "buildTransitive/net8.0/_._": {}
         }
+      },
+      "Entidades/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/Entidades.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Entidades.dll": {}
+        }
       }
     }
   },
@@ -1172,10 +1182,16 @@
         "system.security.cryptography.protecteddata.nuspec",
         "useSharedDesignerContext.txt"
       ]
+    },
+    "Entidades/1.0.0": {
+      "type": "project",
+      "path": "../Entidades/Entidades.csproj",
+      "msbuildProject": "../Entidades/Entidades.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net10.0": [
+      "Entidades >= 1.0.0",
       "Microsoft.Data.SqlClient >= 7.0.1"
     ]
   },
@@ -1212,7 +1228,11 @@
         "net10.0": {
           "framework": "net10.0",
           "targetAlias": "net10.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\sd858\\OneDrive\\Escritorio\\RazorPageElFogon\\Entidades\\Entidades.csproj": {
+              "projectPath": "C:\\Users\\sd858\\OneDrive\\Escritorio\\RazorPageElFogon\\Entidades\\Entidades.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
