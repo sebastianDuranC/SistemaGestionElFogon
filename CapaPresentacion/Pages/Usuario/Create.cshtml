@@ -1,0 +1,123 @@
+﻿@page
+@model CapaPresentacion.Pages.Usuario.CreateModel
+@using System.Text.Json
+
+<section class="space-y-5">
+    <!-- Header -->
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+            <h1 class="text-xl font-semibold tracking-tight text-zinc-800">
+                Nuevo Usuario
+            </h1>
+            <p class="mt-1 text-sm text-zinc-500">
+                Crear un nuevo usuario para el sistema
+            </p>
+        </div>
+        <a href="/Usuario/Index" class="text-whitetransition inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 hover:text-white/90">
+            Volver
+        </a>
+    </div>
+
+    <!-- Formulario -->
+    <div class="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+        <form method="post" class="p-6">
+            
+            <div class="grid gap-6 md:grid-cols-2">
+                <!-- Nombre de usuario -->
+                <div class="space-y-2">
+                    <label asp-for="NuevoUsuario.Nombre" class="block text-sm font-medium text-zinc-700">
+                        Nombre de Usuario <span class="text-secondary">*</span>
+                    </label>
+                    <input asp-for="NuevoUsuario.Nombre"
+                           type="text" 
+                           placeholder="Ingrese el nombre de usuario"
+                           class="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10" />
+                </div>
+
+                <!-- Rol -->
+                <div class="space-y-2">
+                    <label asp-for="NuevoUsuario.RolId" class="block text-sm font-medium text-zinc-700">
+                        Rol <span class="text-secondary">*</span>
+                    </label>
+                    <select asp-for="NuevoUsuario.RolId"
+                            class="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10">
+                        <option value="">Seleccione un rol</option>
+                        @foreach (var rol in Model.ListaRoles)
+                        {
+                            <option value="@rol.Id">@rol.Nombre</option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Contraseña -->
+                <div class="space-y-2">
+                    <label asp-for="Contrasena" class="block text-sm font-medium text-zinc-700">
+                        Contraseña <span class="text-secondary">*</span>
+                    </label>
+                    <div class="relative">
+                        <input asp-for="Contrasena" 
+                               type="password" 
+                               id="contrasena"
+                               placeholder="Ingrese la contraseña"
+                               class="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 pr-10 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10" />
+                        <button type="button" onclick="togglePassword('contrasena', this)" class="absolute top-1/2 right-3 -translate-y-1/2 text-zinc-400 hover:text-zinc-600">
+                            <svg class="icono-ojo h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Confirmar Contraseña -->
+                <div class="space-y-2">
+                    <label asp-for="ConfirmarContrasena" class="block text-sm font-medium text-zinc-700">
+                        Confirmar Contraseña <span class="text-secondary">*</span>
+                    </label>
+                    <div class="relative">
+                        <input asp-for="ConfirmarContrasena" 
+                               type="password" 
+                               id="confirmarContrasena"
+                               placeholder="Confirme la contraseña"
+                               class="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 pr-10 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10" />
+                        <button type="button" onclick="togglePassword('confirmarContrasena', this)" class="absolute top-1/2 right-3 -translate-y-1/2 text-zinc-400 hover:text-zinc-600">
+                            <svg class="icono-ojo h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="mt-8 flex flex-col gap-3 border-t border-zinc-100 pt-6 sm:flex-row sm:justify-end">
+                <a href="/Usuario/Index" class="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-200 bg-white px-6 py-2.5 text-sm font-medium text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-800">
+                    Cancelar
+                </a>
+                <button type="submit" id="btnGuardar"class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-red-600 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-red-700">
+                    Guardar Usuario
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+@section Scripts {
+    <script>
+        // togglePassword: alterna la visibilidad de un input tipo password.
+        // inputId: id del input, btn: el botón que dispara el toggle (se busca un SVG hijo con clase .icono-ojo para cambiar el ícono)
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icono = btn?.querySelector('.icono-ojo');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                // Cambiamos el SVG a ojo tachado (opcional visual)
+                if (icono) icono.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />';
+            } else {
+                input.type = 'password';
+                if (icono) icono.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />';
+            }
+        }
+    </script>
+}

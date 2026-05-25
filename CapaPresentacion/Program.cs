@@ -27,10 +27,10 @@ var app = builder.Build();
 app.UseStaticFiles();
 app.UseRouting();
 
-//primero Authentication, luego Authorization
+//primero Authentication, luego Authorization, luego el middleware de permisos
 app.UseAuthentication();
-app.UseMiddleware<VerificadorPermisosMiddleware>();
 app.UseAuthorization();
+app.UseMiddleware<VerificadorPermisosMiddleware>();
 
 app.MapRazorPages();
 app.Run();

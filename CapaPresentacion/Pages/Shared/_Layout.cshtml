@@ -1,4 +1,4 @@
-﻿@using System.Security.Claims
+﻿@using System.Text.Json
 <!DOCTYPE html>
 <html lang="es" class="scroll-smooth">
 <head>
@@ -7,13 +7,13 @@
     <title>El Fogón</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
-          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="~/logo.ico" rel="icon" />
     <link rel="stylesheet" href="/css/output.css" asp-append-version="true">
     <link rel="stylesheet" href="/css/style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="/css/jquery.dataTables.min.css" asp-append-version="true" />
 </head>
-<body class="overflow-x-hidden bg-[#f5f5f7] text-zinc-900 antialiased">
+<body class="overflow-x-hidden bg-neutral text-primary antialiased">
     <style>
             body {
                 font-family: 'Inter', sans-serif;
@@ -26,7 +26,7 @@
                 <!-- LEFT -->
                 <div class="flex min-w-0 flex-1 items-center gap-8">
                     <!-- LOGO -->
-                    <a asp-page="" class="shrink-0">
+                    <a href="/Index" class="shrink-0">
                         <div class="leading-none" aria-label="Inicio">
                             <img src="/logo.png" alt="Logo del fogón" class="h-10 w-auto" />
                         </div>
@@ -34,159 +34,255 @@
                     <!-- NAV -->
                     <nav class="hidden items-center gap-1 md:flex">
                         <!-- DASHBOARD -->
-                        <a asp-page="/Index"
-                           class="relative rounded-lg px-3 py-2 font-semibold text-[15px] text-red-500 transition-colors">
-                            Dashboard
-                            <span class="absolute right-3 bottom-0 left-3 h-[2px] rounded-full bg-red-500"></span>
-                        </a>
+                        @if (User.HasClaim("Permiso", "/Index"))
+                        {
+                            <a href="/Index"
+                               class="relative rounded-lg px-3 py-2 font-semibold text-[15px] text-red-500 transition-colors">
+                                Dashboard
+                                <span class="absolute right-3 bottom-0 left-3 h-[2px] rounded-full bg-red-500"></span>
+                            </a>
+                        }
                         <!-- ADMINISTRACION -->
-                        <div class="relative" data-dropdown="administracion">
-                            <button type="button"
-                                    data-dropdown-trigger
-                                    aria-expanded="false"
-                                    aria-controls="menu-administracion"
-                                    class="group flex items-center gap-1 rounded-lg px-3 py-2 font-medium text-[15px] text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-900">
-                                Acceso y Administración
-                                <svg data-dropdown-icon
-                                     class="h-4 w-4 transition-transform duration-200"
-                                     fill="none"
-                                     stroke="currentColor"
-                                     viewBox="0 0 24 24">
-                                    <path stroke-linecap="round"
-                                          stroke-linejoin="round"
-                                          stroke-width="2"
-                                          d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </button>
-                            <div id="menu-administracion"
-                                 data-dropdown-menu
-                                 class="pointer-events-none invisible absolute top-full left-0 z-50 mt-2 w-64 -translate-y-2 rounded-xl border border-zinc-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-200 ease-out">
-                                <a asp-page="Usuario/Index"
-                                   class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
-                                    Usuarios
-                                </a>
-                                <a href="#"
-                                   class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
-                                    Roles
-                                </a>
-                                @* <a href="#"
-                                   class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
-                                    Permisos
-                                </a> *@
-                                <a href="#"
-                                   class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
-                                    Negocio
-                                </a>
+                        @if (User.HasClaim("Permiso", "/Negocio/Edit") || User.HasClaim("Permiso", "/Usuario/Index") || User.HasClaim("Permiso", "/Rol/Index"))
+                        {
+                            <div class="relative" data-dropdown="administracion">
+                                <button type="button"
+                                        data-dropdown-trigger
+                                        aria-expanded="false"
+                                        aria-controls="menu-administracion"
+                                        class="group flex items-center gap-1 rounded-lg px-3 py-2 font-medium text-[15px] text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-900">
+                                    Acceso y Administración
+                                    <svg data-dropdown-icon
+                                         class="h-4 w-4 transition-transform duration-200"
+                                         fill="none"
+                                         stroke="currentColor"
+                                         viewBox="0 0 24 24">
+                                        <path stroke-linecap="round"
+                                              stroke-linejoin="round"
+                                              stroke-width="2"
+                                              d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div id="menu-administracion"
+                                     data-dropdown-menu
+                                     class="pointer-events-none invisible absolute top-full left-0 z-50 mt-2 w-64 -translate-y-2 rounded-xl border border-zinc-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-200 ease-out">
+                                    @if (User.HasClaim("Permiso", "/Negocio/Edit"))
+                                    {
+                                        <a href="/Negocio/Edit"
+                                           class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                            Negocio
+                                        </a>
+                                    }
+                                    @if (User.HasClaim("Permiso", "/Usuario/Index"))
+                                    {
+                                        <a href="/Usuario/Index"
+                                           class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                            Usuarios
+                                        </a>
+                                    }
+                                    @if (User.HasClaim("Permiso", "/Rol/Index"))
+                                    {
+                                        <a href="/Rol/Index"
+                                           class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                            Roles
+                                        </a>
+                                    }
+                                </div>
                             </div>
-                        </div>
+                        }
                         <!-- COMPRAS -->
-                        <div class="relative" data-dropdown="compras">
-                            <button type="button"
-                                    data-dropdown-trigger
-                                    aria-expanded="false"
-                                    aria-controls="menu-compras"
-                                    class="group flex items-center gap-1 rounded-lg px-3 py-2 font-medium text-[15px] text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-900">
-                                Compras
-                                <svg data-dropdown-icon
-                                     class="h-4 w-4 transition-transform duration-200"
-                                     fill="none"
-                                     stroke="currentColor"
-                                     viewBox="0 0 24 24">
-                                    <path stroke-linecap="round"
-                                          stroke-linejoin="round"
-                                          stroke-width="2"
-                                          d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </button>
-                            <div id="menu-compras"
-                                 data-dropdown-menu
-                                 class="pointer-events-none invisible absolute top-full left-0 z-50 mt-2 w-56 -translate-y-2 rounded-xl border border-zinc-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-200 ease-out">
-                                <a href="#"
-                                   class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
-                                    Ordenes de compra
-                                </a>
-                                <a href="#"
-                                   class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
-                                    Proveedores
-                                </a>
+                        @if (User.HasClaim("Permiso", "/Compra/Index") || User.HasClaim("Permiso", "/Proveedor/Index") || User.HasClaim("Permiso", "/UnidadesMedida/Index") || User.HasClaim("Permiso", "/Insumo/Index") || User.HasClaim("Permiso", "/InsumoCategoria/Index") || User.HasClaim("Permiso", "/MovimientoInventario/Index") || User.HasClaim("Permiso", "/CierreInventario/Index"))
+                        {
+                            <div class="relative" data-dropdown="compras">
+                                <button type="button"
+                                        data-dropdown-trigger
+                                        aria-expanded="false"
+                                        aria-controls="menu-compras"
+                                        class="group flex items-center gap-1 rounded-lg px-3 py-2 font-medium text-[15px] text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-900">
+                                    Compras
+                                    <svg data-dropdown-icon
+                                         class="h-4 w-4 transition-transform duration-200"
+                                         fill="none"
+                                         stroke="currentColor"
+                                         viewBox="0 0 24 24">
+                                        <path stroke-linecap="round"
+                                              stroke-linejoin="round"
+                                              stroke-width="2"
+                                              d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div id="menu-compras"
+                                     data-dropdown-menu
+                                     class="pointer-events-none invisible absolute top-full left-0 z-50 mt-2 w-56 -translate-y-2 rounded-xl border border-zinc-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-200 ease-out">
+                                    @if (User.HasClaim("Permiso", "/Compra/Index"))
+                                    {
+                                        <a href="/Compra/Index"
+                                           class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                            Órdenes de Compra
+                                        </a>
+                                    }
+                                    @if (User.HasClaim("Permiso", "/Proveedor/Index"))
+                                    {
+                                        <a href="/Proveedor/Index"
+                                           class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                            Proveedores
+                                        </a>
+                                    }
+                                    @if (User.HasClaim("Permiso", "/UnidadesMedida/Index"))
+                                    {
+                                        <a href="/UnidadesMedida/Index"
+                                           class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                            Unidades de Medida
+                                        </a>
+                                    }
+                                    @if (User.HasClaim("Permiso", "/Insumo/Index"))
+                                    {
+                                        <a href="/Insumo/Index"
+                                           class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                            Insumos
+                                        </a>
+                                    }
+                                    @if (User.HasClaim("Permiso", "/InsumoCategoria/Index"))
+                                    {
+                                        <a href="/InsumoCategoria/Index"
+                                           class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                            Categorías Insumo
+                                        </a>
+                                    }
+                                    @if (User.HasClaim("Permiso", "/MovimientoInventario/Index"))
+                                    {
+                                        <a href="/MovimientoInventario/Index"
+                                           class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                            Movimientos
+                                        </a>
+                                    }
+                                    @if (User.HasClaim("Permiso", "/CierreInventario/Index"))
+                                    {
+                                        <a href="/CierreInventario/Index"
+                                           class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                            Cierre de Inventario
+                                        </a>
+                                    }
+                                </div>
                             </div>
-                        </div>
+                        }
                         <!-- CAJA -->
-                        <div class="relative" data-dropdown="caja">
-                            <button type="button"
-                                    data-dropdown-trigger
-                                    aria-expanded="false"
-                                    aria-controls="menu-caja"
-                                    class="group flex items-center gap-1 rounded-lg px-3 py-2 font-medium text-[15px] text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-900">
-                                Caja
-                                <svg data-dropdown-icon
-                                     class="h-4 w-4 transition-transform duration-200"
-                                     fill="none"
-                                     stroke="currentColor"
-                                     viewBox="0 0 24 24">
-                                    <path stroke-linecap="round"
-                                          stroke-linejoin="round"
-                                          stroke-width="2"
-                                          d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </button>
-                            <div id="menu-caja"
-                                 data-dropdown-menu
-                                 class="pointer-events-none invisible absolute top-full left-0 z-50 mt-2 w-56 -translate-y-2 rounded-xl border border-zinc-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-200 ease-out">
-                                <a href="#"
-                                   class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
-                                    Apertura de caja
-                                </a>
-                                <a href="#"
-                                   class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
-                                    Cierre de caja
-                                </a>
+                        @if (User.HasClaim("Permiso", "/ControlCaja/Index") || User.HasClaim("Permiso", "/ControlCaja/Apertura") || User.HasClaim("Permiso", "/ControlCaja/Cierre") || User.HasClaim("Permiso", "/EgresoCaja/Index") || User.HasClaim("Permiso", "/Gastos/Index"))
+                        {
+                            <div class="relative" data-dropdown="caja">
+                                <button type="button"
+                                        data-dropdown-trigger
+                                        aria-expanded="false"
+                                        aria-controls="menu-caja"
+                                        class="group flex items-center gap-1 rounded-lg px-3 py-2 font-medium text-[15px] text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-900">
+                                    Caja
+                                    <svg data-dropdown-icon
+                                         class="h-4 w-4 transition-transform duration-200"
+                                         fill="none"
+                                         stroke="currentColor"
+                                         viewBox="0 0 24 24">
+                                        <path stroke-linecap="round"
+                                              stroke-linejoin="round"
+                                              stroke-width="2"
+                                              d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div id="menu-caja"
+                                     data-dropdown-menu
+                                     class="pointer-events-none invisible absolute top-full left-0 z-50 mt-2 w-56 -translate-y-2 rounded-xl border border-zinc-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-200 ease-out">
+                                    @if (User.HasClaim("Permiso", "/ControlCaja/Apertura"))
+                                    {
+                                        <a href="/ControlCaja/Apertura"
+                                           class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                            Apertura de Caja
+                                        </a>
+                                    }
+                                    @if (User.HasClaim("Permiso", "/ControlCaja/Cierre"))
+                                    {
+                                        <a href="/ControlCaja/Cierre"
+                                           class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                            Cierre de Caja
+                                        </a>
+                                    }
+                                    @if (User.HasClaim("Permiso", "/EgresoCaja/Index"))
+                                    {
+                                        <a href="/EgresoCaja/Index"
+                                           class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                            Egresos
+                                        </a>
+                                    }
+                                    @if (User.HasClaim("Permiso", "/Gastos/Index"))
+                                    {
+                                        <a href="/Gastos/Index"
+                                           class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                            Gastos Operativos
+                                        </a>
+                                    }
+                                </div>
                             </div>
-                        </div>
+                        }
                         <!-- VENTAS -->
-                        <div class="relative" data-dropdown="ventas">
-                            <button type="button"
-                                    data-dropdown-trigger
-                                    aria-expanded="false"
-                                    aria-controls="menu-ventas"
-                                    class="group flex items-center gap-1 rounded-lg px-3 py-2 font-medium text-[15px] text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-900">
-                                Ventas
-                                <svg data-dropdown-icon
-                                     class="h-4 w-4 transition-transform duration-200"
-                                     fill="none"
-                                     stroke="currentColor"
-                                     viewBox="0 0 24 24">
-                                    <path stroke-linecap="round"
-                                          stroke-linejoin="round"
-                                          stroke-width="2"
-                                          d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </button>
-                            <div id="menu-ventas"
-                                 data-dropdown-menu
-                                 class="pointer-events-none invisible absolute top-full left-0 z-50 mt-2 w-64 -translate-y-2 rounded-xl border border-zinc-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-200 ease-out">
-                                <a href="#"
-                                   class="block rounded-lg bg-zinc-100 px-3 py-2.5 text-sm font-semibold text-zinc-900">
+                        @if (User.HasClaim("Permiso", "/Venta/Index") || User.HasClaim("Permiso", "/Cliente/Index") || User.HasClaim("Permiso", "/Producto/Index") || User.HasClaim("Permiso", "/ProductoCategoria/Index") || User.HasClaim("Permiso", "/MetodoPago/Index"))
+                        {
+                            <div class="relative" data-dropdown="ventas">
+                                <button type="button"
+                                        data-dropdown-trigger
+                                        aria-expanded="false"
+                                        aria-controls="menu-ventas"
+                                        class="group flex items-center gap-1 rounded-lg px-3 py-2 font-medium text-[15px] text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-900">
                                     Ventas
-                                </a>
-                                <a href="#"
-                                   class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
-                                    Clientes
-                                </a>
-                                <a href="#"
-                                   class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
-                                    Productos
-                                </a>
-                                <a href="#"
-                                   class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
-                                    Categorías
-                                </a>
-                                <a href="#"
-                                   class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
-                                    Método de pago
-                                </a>
+                                    <svg data-dropdown-icon
+                                         class="h-4 w-4 transition-transform duration-200"
+                                         fill="none"
+                                         stroke="currentColor"
+                                         viewBox="0 0 24 24">
+                                        <path stroke-linecap="round"
+                                              stroke-linejoin="round"
+                                              stroke-width="2"
+                                              d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div id="menu-ventas"
+                                     data-dropdown-menu
+                                     class="pointer-events-none invisible absolute top-full left-0 z-50 mt-2 w-64 -translate-y-2 rounded-xl border border-zinc-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-200 ease-out">
+                                    @if (User.HasClaim("Permiso", "/Venta/Index"))
+                                    {
+                                        <a href="/Venta/Index"
+                                           class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                            Ventas
+                                        </a>
+                                    }
+                                    @if (User.HasClaim("Permiso", "/Cliente/Index"))
+                                    {
+                                        <a href="/Cliente/Index"
+                                           class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                            Clientes
+                                        </a>
+                                    }
+                                    @if (User.HasClaim("Permiso", "/Producto/Index"))
+                                    {
+                                        <a href="/Producto/Index"
+                                           class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                            Productos
+                                        </a>
+                                    }
+                                    @if (User.HasClaim("Permiso", "/ProductoCategoria/Index"))
+                                    {
+                                        <a href="/ProductoCategoria/Index"
+                                           class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                            Categorías
+                                        </a>
+                                    }
+                                    @if (User.HasClaim("Permiso", "/MetodoPago/Index"))
+                                    {
+                                        <a href="/MetodoPago/Index"
+                                           class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                            Método de Pago
+                                        </a>
+                                    }
+                                </div>
                             </div>
-                        </div>
+                        }
                     </nav>
                 </div>
                 <!-- RIGHT -->
@@ -212,7 +308,7 @@
                                 @User.Identity.Name
                             </p>
                             <p class="mt-0.5 text-xs text-zinc-500">
-                                
+                                @User.FindFirst("NombreRol")?.Value
                             </p>
                         </div>
                         <form method="post" asp-page="/Acceso/Logout" class="inline">
@@ -226,77 +322,107 @@
         </div>
     </header>
     <!-- CONTENT -->
-    <main class="animate-fade mx-auto max-w-[1600px] bg-neutral px-4 py-8 md:px-6 md:py-10">
-        <!-- PAGE CONTENT -->
-        <div class="container mx-auto p-6">
+    <main class="animate-fade mx-auto flex min-h-[calc(100vh-100px)] max-w-[1600px] flex-grow flex-col items-center justify-center bg-neutral md:px-12 md:py-4">
+        <div class="w-full max-w-6xl">
             @RenderBody()
         </div>
     </main>
     <script>
-        // Controla apertura y cierre de cada dropdown del navbar.
-        (() => {
-            const dropdowns = document.querySelectorAll("[data-dropdown]");
-            if (!dropdowns.length) return;
+            // Controla apertura y cierre de cada dropdown del navbar.
+            (() => {
+                const dropdowns = document.querySelectorAll("[data-dropdown]");
+                if (!dropdowns.length) return;
 
-            // Cierra todos los menús, excepto uno opcional.
-            const closeAll = (exceptId = null) => {
+                // Cierra todos los menús, excepto uno opcional.
+                const closeAll = (exceptId = null) => {
+                    dropdowns.forEach((dropdown) => {
+                        if (exceptId && dropdown.dataset.dropdown === exceptId) return;
+
+                        const trigger = dropdown.querySelector("[data-dropdown-trigger]");
+                        const menu = dropdown.querySelector("[data-dropdown-menu]");
+                        const icon = dropdown.querySelector("[data-dropdown-icon]");
+
+                        if (!trigger || !menu) return;
+
+                        trigger.setAttribute("aria-expanded", "false");
+                        menu.classList.add("invisible", "pointer-events-none", "-translate-y-2", "opacity-0");
+                        menu.classList.remove("visible", "pointer-events-auto", "translate-y-0", "opacity-100");
+                        icon?.classList.remove("rotate-180");
+                    });
+                };
+
                 dropdowns.forEach((dropdown) => {
-                    if (exceptId && dropdown.dataset.dropdown === exceptId) return;
-
                     const trigger = dropdown.querySelector("[data-dropdown-trigger]");
                     const menu = dropdown.querySelector("[data-dropdown-menu]");
                     const icon = dropdown.querySelector("[data-dropdown-icon]");
 
                     if (!trigger || !menu) return;
 
-                    trigger.setAttribute("aria-expanded", "false");
-                    menu.classList.add("invisible", "pointer-events-none", "-translate-y-2", "opacity-0");
-                    menu.classList.remove("visible", "pointer-events-auto", "translate-y-0", "opacity-100");
-                    icon?.classList.remove("rotate-180");
+                    // Alterna el menú actual y cierra el resto.
+                    trigger.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        const isOpen = trigger.getAttribute("aria-expanded") === "true";
+
+                        closeAll(dropdown.dataset.dropdown);
+
+                        if (isOpen) {
+                            trigger.setAttribute("aria-expanded", "false");
+                            menu.classList.add("invisible", "pointer-events-none", "-translate-y-2", "opacity-0");
+                            menu.classList.remove("visible", "pointer-events-auto", "translate-y-0", "opacity-100");
+                            icon?.classList.remove("rotate-180");
+                            return;
+                        }
+
+                        trigger.setAttribute("aria-expanded", "true");
+                        menu.classList.remove("invisible", "pointer-events-none", "-translate-y-2", "opacity-0");
+                        menu.classList.add("visible", "pointer-events-auto", "translate-y-0", "opacity-100");
+                        icon?.classList.add("rotate-180");
+                    });
                 });
-            };
 
-            dropdowns.forEach((dropdown) => {
-                const trigger = dropdown.querySelector("[data-dropdown-trigger]");
-                const menu = dropdown.querySelector("[data-dropdown-menu]");
-                const icon = dropdown.querySelector("[data-dropdown-icon]");
-
-                if (!trigger || !menu) return;
-
-                // Alterna el menú actual y cierra el resto.
-                trigger.addEventListener("click", (event) => {
-                    event.preventDefault();
-                    const isOpen = trigger.getAttribute("aria-expanded") === "true";
-
-                    closeAll(dropdown.dataset.dropdown);
-
-                    if (isOpen) {
-                        trigger.setAttribute("aria-expanded", "false");
-                        menu.classList.add("invisible", "pointer-events-none", "-translate-y-2", "opacity-0");
-                        menu.classList.remove("visible", "pointer-events-auto", "translate-y-0", "opacity-100");
-                        icon?.classList.remove("rotate-180");
-                        return;
-                    }
-
-                    trigger.setAttribute("aria-expanded", "true");
-                    menu.classList.remove("invisible", "pointer-events-none", "-translate-y-2", "opacity-0");
-                    menu.classList.add("visible", "pointer-events-auto", "translate-y-0", "opacity-100");
-                    icon?.classList.add("rotate-180");
+                // Cierra menús al hacer clic fuera del navbar.
+                document.addEventListener("click", (event) => {
+                    if (event.target.closest("[data-dropdown]")) return;
+                    closeAll();
                 });
-            });
 
-            // Cierra menús al hacer clic fuera del navbar.
-            document.addEventListener("click", (event) => {
-                if (event.target.closest("[data-dropdown]")) return;
-                closeAll();
-            });
+                // Cierra menús con la tecla Escape.
+                document.addEventListener("keydown", (event) => {
+                    if (event.key === "Escape") closeAll();
+                });
+            })();
 
-            // Cierra menús con la tecla Escape.
-            document.addEventListener("keydown", (event) => {
-                if (event.key === "Escape") closeAll();
+            
+            document.addEventListener('DOMContentLoaded', function () {
+                //Leemos el mensaje enviado desde el codebehind a través de TempData.
+                //Se serializa en el servidor y aquí lo recuperamos como JSON seguro.
+                const mensaje = @Html.Raw(JsonSerializer.Serialize(TempData["Swal_Message"] ?? ""));
+                const icono = @Html.Raw(JsonSerializer.Serialize(TempData["Swal_Icon"] ?? ""));
+
+                //Si no hay mensaje, no hacemos nada.
+                if (!mensaje) return;
+
+                //Configuramos un Toast
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 2200,
+                    timerProgressBar: true
+                });
+
+                //Mostramos el toast con el icono y el título (mensaje).
+                Toast.fire({ icon: icono || 'success', title: mensaje });
             });
-        })();
     </script>
+    <!-- jQuery + DataTables -->
+    <script src="/js/jquery-3.7.1.min.js"></script>
+    <script src="/js/jquery.dataTables.min.js"></script>
+    <!-- Configuracion de estilo datatable personalizado -->
+    <script src="~/js/configuracionDataTable.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="/js/sweetalert2.all.min.js"></script>
+    <script src="~/js/fnEliminarId.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

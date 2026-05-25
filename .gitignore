@@ -26,3 +26,6 @@ packages/
 # Sistema
 .DS_Store
 Thumbs.db
+# Fotos subidas por usuarios
+CapaPresentacion/wwwroot/Fotos/*
+!CapaPresentacion/wwwroot/Fotos/.gitkeep

@@ -1,0 +1,92 @@
+﻿@page
+@model CapaPresentacion.Pages.Negocio.EditModel
+@using System.Text.Json
+
+<section class="space-y-5">
+    <!-- Header -->
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+            <h1 class="text-xl font-semibold tracking-tight text-zinc-800">
+                Editar Negocio
+            </h1>
+            <p class="mt-1 text-sm text-zinc-500">
+                Modificar los datos generales del negocio
+            </p>
+        </div>
+        <a href="/Index" class="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-primary/90 hover:text-white/90">
+            Volver
+        </a>
+    </div>
+
+    <!-- Formulario -->
+    <div class="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+        <form method="post" enctype="multipart/form-data" class="p-6">
+            <input type="hidden" asp-for="DatoNegocio.Id" />
+            <input type="hidden" asp-for="DatoNegocio.LogoUrl" />
+            <input type="hidden" asp-for="DatoNegocio.Estado" />
+
+            <div class="grid gap-6 md:grid-cols-2">
+                <!-- Nombre del Negocio -->
+                <div class="space-y-2">
+                    <label asp-for="DatoNegocio.Nombre" class="block text-sm font-medium text-zinc-700">
+                        Nombre del Negocio <span class="text-red-600">*</span>
+                    </label>
+                    <input asp-for="DatoNegocio.Nombre"
+                           type="text" 
+                           placeholder="Ingrese el nombre del negocio"
+                           class="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10"
+                           required />
+                </div>
+
+                <!-- Dirección -->
+                <div class="space-y-2">
+                    <label asp-for="DatoNegocio.Direccion" class="block text-sm font-medium text-zinc-700">
+                        Dirección <span class="text-red-600">*</span>
+                    </label>
+                    <input asp-for="DatoNegocio.Direccion"
+                           type="text" 
+                           placeholder="Ingrese la dirección"
+                           class="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10"
+                           required />
+                </div>
+
+                <!-- Logo (Subida de archivo) -->
+                <div class="space-y-2">
+                    <label asp-for="Foto" class="block text-sm font-medium text-zinc-700">
+                        Logo del Negocio
+                    </label>
+                    <input asp-for="Foto"
+                           type="file" 
+                           accept="image/*"
+                           class="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-700 transition outline-none file:mr-4 file:rounded-md file:border-0 file:bg-red-50 file:px-3 file:py-1 file:text-xs file:font-semibold file:text-red-700 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10 hover:file:bg-red-100" />
+                    <p class="text-xs text-zinc-400">Seleccione un archivo de imagen si desea cambiar el logo.</p>
+                </div>
+
+                <!-- Logo Actual / Previsualización -->
+                <div class="flex flex-col justify-end space-y-2">
+                    <span class="block text-sm font-medium text-zinc-700">Logo Actual</span>
+                    <div class="mt-2 flex h-20 w-20 items-center justify-center overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50">
+                        @if (!string.IsNullOrEmpty(Model.DatoNegocio.LogoUrl))
+                        {
+                            <img src="@Model.DatoNegocio.LogoUrl" alt="Logo" class="h-full w-full object-contain" />
+                        }
+                        else
+                        {
+                            <span class="text-xs text-zinc-400">Sin logo</span>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="mt-8 flex flex-col gap-3 border-t border-zinc-100 pt-6 sm:flex-row sm:justify-end">
+                <a href="/Index" class="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-200 bg-white px-6 py-2.5 text-sm font-medium text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-800">
+                    Cancelar
+                </a>
+                <button type="submit" id="btnGuardar" class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-red-600 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-red-700">
+                    Actualizar Negocio
+                </button>
+            </div>
+        </form>
+    </div>
+</section>

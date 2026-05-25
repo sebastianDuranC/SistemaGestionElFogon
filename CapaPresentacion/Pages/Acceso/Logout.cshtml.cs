@@ -15,7 +15,7 @@ namespace CapaPresentacion.Pages.Acceso
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
             // Redirigir al login
-            return RedirectToPage("/Acceso/Login");
+            return Redirect("/Acceso/Login");
         }
     }
 }

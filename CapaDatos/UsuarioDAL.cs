@@ -1,9 +1,10 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Dapper;
+using Entidades;
+using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
-using Entidades;
 
 namespace CapaDatos
 {
@@ -11,66 +12,84 @@ namespace CapaDatos
     {
         private readonly ConexionDAL conexion = new ConexionDAL();
 
-        public Usuario ObtenerPorNombre(string Nombre)
-        {
-            Usuario usuario = new Usuario();
-
-            using (var Conexion = conexion.ObtenerConexion())
-            using (var Comando = new SqlCommand("sp_ObtenerUsuarioPorNombre", Conexion))
-            {
-                Comando.CommandType = CommandType.StoredProcedure;
-                Comando.Parameters.AddWithValue("@Nombre", Nombre);
-
-                Conexion.Open();
-
-                using (var Lector = Comando.ExecuteReader())
-                {
-                    if (Lector.Read())
-                    {
-                        usuario = new Usuario
-                        {
-                            Id = Convert.ToInt32(Lector["Id"]),
-                            Nombre = Lector["Nombre"].ToString(),
-                            Contra = Lector["Contra"].ToString(),
-                            RolId = Convert.ToInt32(Lector["RolId"]),
-                            NegocioId = Convert.ToInt32(Lector["NegocioId"]),
-                            Estado = Convert.ToBoolean(Lector["Estado"])
-                        };
-                    }
-                }
-            }
-
-            return usuario;
-        }
-
         public List<Usuario> ObtenerTodos()
         {
             List<Usuario> Lista = new List<Usuario>();
 
-            using (var Conexion = conexion.ObtenerConexion())
-            using (var Comando = new SqlCommand("sp_ObtenerUsuarios", Conexion))
-            {
-                Comando.CommandType = CommandType.StoredProcedure;
-                Conexion.Open();
+            using var Conexion = conexion.ObtenerConexion();
+            var resultado =Conexion.Query<Usuario>(
+                "sp_ListarUsuarios",
+                commandType: CommandType.StoredProcedure
+            );
+            return resultado.ToList();
+        }
 
-                using (var Lector = Comando.ExecuteReader())
+        public Usuario ObtenerPorNombre(string Nombre)
+        {
+            using var Conexion = conexion.ObtenerConexion();
+            return Conexion.QueryFirstOrDefault<Usuario>(
+                "sp_ObtenerUsuarioPorNombre",
+                new { Nombre },
+                commandType: CommandType.StoredProcedure
+            );
+        }
+
+        public bool CrearUsuario(Usuario usuario)
+        {
+            using var Conexion = conexion.ObtenerConexion();
+            var resultado = Conexion.Execute(
+                "sp_CrearUsuario",
+                new
                 {
-                    while (Lector.Read())
-                    {
-                        Lista.Add(new Usuario
-                        {
-                            Id = Convert.ToInt32(Lector["Id"]),
-                            Nombre = Lector["Nombre"].ToString(),
-                            RolId = Convert.ToInt32(Lector["RolId"]),
-                            NombreRol = Lector["NombreRol"].ToString(),
-                            NegocioId = Convert.ToInt32(Lector["NegocioId"]),
-                            Estado = Convert.ToBoolean(Lector["Estado"])
-                        });
-                    }
-                }
-            }
+                    usuario.Nombre,
+                    usuario.Contra,
+                    usuario.RolId,
+                    usuario.NegocioId,
+                    usuario.Estado
+                },
+                commandType: CommandType.StoredProcedure
+            );
+            return resultado > 0;
+        }
 
-            return Lista;
+        public bool EditarUsuario(Usuario usuario)
+        {
+            using var Conexion = conexion.ObtenerConexion();
+            var resultado = Conexion.Execute(
+                "sp_EditarUsuario",
+                new
+                {
+                    usuario.Id,
+                    usuario.Nombre,
+                    usuario.Contra,
+                    usuario.RolId,
+                    usuario.NegocioId,
+                    usuario.Estado
+                },
+                commandType: CommandType.StoredProcedure
+            );
+            return resultado > 0;
+        }
+
+        public Usuario ObtenerPorId(int id)
+        {
+            using var Conexion = conexion.ObtenerConexion();
+            return Conexion.QueryFirstOrDefault<Usuario>(
+                "sp_ObtenerUsuarioPorId",
+                new { Id = id },
+                commandType: CommandType.StoredProcedure
+            );
+        }
+
+        public bool EliminarUsuario(int id)
+        {
+            using var Conexion = conexion.ObtenerConexion();
+            var resultado = Conexion.Execute(
+                "sp_EliminarUsuario",
+                new { Id = id },
+                commandType: CommandType.StoredProcedure
+            );
+            return resultado > 0;
         }
     }
 }

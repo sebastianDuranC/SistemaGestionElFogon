@@ -3,36 +3,35 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using CapaNegocio;
 using Entidades;
+using System;
 using System.Collections.Generic;
 
-namespace CapaPresentacion.Pages.Usuario
+namespace CapaPresentacion.Pages.Rol
 {
     [Authorize]
     public class IndexModel : PageModel
     {
-        UsuarioBLL usuarioBLL = new();
-        NegocioBLL negocioBLL = new();
-        public List<Entidades.Usuario> ListaUsuarios = new List<Entidades.Usuario>();
-        public Entidades.Negocio datoNegocio { get; set; }
+        private readonly RolBLL rolBLL = new RolBLL();
+        public List<Entidades.Rol> ListaRoles { get; set; } = new List<Entidades.Rol>();
+
         public void OnGet()
         {
-            ListaUsuarios = usuarioBLL.ObtenerTodos();
-            datoNegocio = negocioBLL.obtenerDatosNegocioId(1);
+            ListaRoles = rolBLL.ObtenerTodos();
         }
 
         public IActionResult OnPostDelete(int id)
         {
             try
             {
-                var resultado = usuarioBLL.EliminarUsuario(id);
+                var resultado = rolBLL.EliminarRol(id);
                 if (resultado)
                 {
-                    TempData["Swal_Message"] = "Usuario eliminado exitosamente";
+                    TempData["Swal_Message"] = "Rol eliminado exitosamente";
                     TempData["Swal_Icon"] = "success";
                 }
                 else
                 {
-                    TempData["Swal_Message"] = "No se pudo eliminar el usuario";
+                    TempData["Swal_Message"] = "No se pudo eliminar el rol";
                     TempData["Swal_Icon"] = "error";
                 }
             }

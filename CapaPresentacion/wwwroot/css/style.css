@@ -12,3 +12,79 @@
         transform: translateY(0);
     }
 }
+
+/* ============================================
+   DataTables — integración con Tailwind
+   ============================================ */
+
+/* Quitar bordes/padding que DataTables añade */
+.dataTables_wrapper {
+    padding: 0 !important;
+    border: none !important;
+}
+
+/* Info: "Mostrando X a Y de Z registros" */
+.dataTables_info {
+    padding: 12px 16px !important;
+    font-size: 0.75rem !important;
+    color: #71717a !important;
+    border-top: 1px solid #e4e4e7 !important;
+}
+
+/* Paginación */
+.dataTables_paginate {
+    padding: 8px 16px 12px !important;
+    border-top: 1px solid #e4e4e7 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+}
+
+/* Botones de paginación */
+.dataTables_paginate .paginate_button {
+    border: none !important;
+    background: transparent !important;
+    margin: 0 !important;
+    border-radius: 0.375rem !important;
+    padding: 0 !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 0.875rem !important;
+    color: #71717a !important;
+    cursor: pointer !important;
+    transition: background-color 0.15s ease, color 0.15s ease !important;
+}
+
+.dataTables_paginate .paginate_button:hover {
+    background-color: #f4f4f5 !important;
+    color: #18181b !important;
+}
+
+/* Página activa */
+.dataTables_paginate .paginate_button.current {
+    background-color: #dc2626 !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+}
+
+/* Botón deshabilitado */
+.dataTables_paginate .paginate_button.disabled,
+.dataTables_paginate .paginate_button.disabled:hover {
+    color: #d4d4d8 !important;
+    cursor: default !important;
+    background: transparent !important;
+}
+
+/* El footer de paginación se muestra en horizontal */
+.dataTables_paginate {
+    float: none !important;
+    text-align: left !important;
+}
+
+/* Quitar el borde inferior que DataTables añade */
+table.dataTable.no-footer {
+    border-bottom: none !important;
+}

@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CapaDatos\CapaDatos.csproj" />
     <ProjectReference Include="..\CapaNegocio\CapaNegocio.csproj" />
+    <ProjectReference Include="..\Entidades\Entidades.csproj" />
   </ItemGroup>
 
 </Project>

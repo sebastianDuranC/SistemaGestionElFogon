@@ -42,8 +42,8 @@ namespace CapaPresentacion.Pages.Acceso
                 new Claim(ClaimTypes.NameIdentifier, Usuario.Id.ToString()),
                 new Claim(ClaimTypes.Name,           Usuario.Nombre),
                 new Claim("RolId",                   Usuario.RolId.ToString()),
+                new Claim("NegocioId",               Usuario.NegocioId.ToString()),
                 new Claim("NombreRol",               Usuario.NombreRol.ToString()),
-                new Claim("NegocioId",               Usuario.NegocioId.ToString())
             };
 
             //Agregar cada ruta permitida como un claim "Permiso"
@@ -64,7 +64,8 @@ namespace CapaPresentacion.Pages.Acceso
             );
 
             //Redirigir al dashboard
-            return RedirectToPage("/Dashboard");
+            return Redirect("/Index");
+
         }
     }
 }

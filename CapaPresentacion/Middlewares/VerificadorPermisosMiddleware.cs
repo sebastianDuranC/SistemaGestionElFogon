@@ -14,10 +14,10 @@
 
         public VerificadorPermisosMiddleware(RequestDelegate Next)
             => _next = Next;
-
         public async Task InvokeAsync(HttpContext Contexto)
         {
-            var RutaActual = Contexto.Request.Path.Value?.ToLower();
+            //Obtener ruta actual (sin query string)
+            var RutaActual = Contexto.Request.Path.Value;
 
             // 1. Si es ruta pública, dejar pasar sin verificar
             if (RutasPublicas.Any(R => RutaActual?.StartsWith(R, StringComparison.OrdinalIgnoreCase) == true))
@@ -26,26 +26,21 @@
                 return;
             }
 
-            // 2. Si no está autenticado, lo manda al login (ya lo maneja Cookie Auth)
-            if (Contexto.User?.Identity?.IsAuthenticated != true)
-            {
-                Contexto.Response.Redirect("/Acceso/Login");
-                return;
-            }
-
-            // 3. Verificar si el usuario tiene el claim "Permiso" con esta ruta
+            // 2. Verificar si el usuario tiene el claim "Permiso" con esta ruta
+            // Nota: La verificación de autenticación la maneja UseAuthorization()
+            // que redirige al LoginPath configurado. Si llegamos aquí autenticados,
+            // solo resta validar los permisos por ruta.
             var TienePermiso = Contexto.User.Claims
-                .Where(C => C.Type == "Permiso")
-                .Any(C => C.Value.Equals(RutaActual, StringComparison.OrdinalIgnoreCase));
+                .Any(C => C.Type == "Permiso" && C.Value.Equals(RutaActual, StringComparison.OrdinalIgnoreCase));
 
-            // 4. Si NO tiene permiso, redirigir a Acceso Denegado
+            // 3. Si NO tiene permiso, redirigir a Acceso Denegado
             if (!TienePermiso)
             {
                 Contexto.Response.Redirect("/Acceso/AccesoDenegado");
                 return;
             }
 
-            // 5. Si tiene permiso, continuar con el request
+            // 4. Si tiene permiso, continuar con el request
             await _next(Contexto);
         }
     }
