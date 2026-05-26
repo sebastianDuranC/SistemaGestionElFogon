@@ -1,0 +1,61 @@
+@page
+@model CapaPresentacion.Pages.UnidadesMedida.CreateModel
+
+<section class="space-y-5">
+    <!-- Header -->
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+            <h1 class="text-xl font-semibold tracking-tight text-zinc-800">
+                Nueva Unidad de Medida
+            </h1>
+            <p class="mt-1 text-sm text-zinc-500">
+                Ingresar una nueva unidad de medida al sistema
+            </p>
+        </div>
+        <a href="/UnidadesMedida/Index" class="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-800">
+            Volver
+        </a>
+    </div>
+
+    <!-- Formulario -->
+    <div class="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+        <form method="post" class="p-6">
+            
+            <div class="grid gap-6 md:grid-cols-2">
+                <!-- Campo Nombre -->
+                <div class="space-y-2">
+                    <label asp-for="NuevaUnidad.Nombre" class="block text-sm font-medium text-zinc-700">
+                        Nombre <span class="text-red-600">*</span>
+                    </label>
+                    <input asp-for="NuevaUnidad.Nombre"
+                           type="text" 
+                           placeholder="Ej. Kilogramos, Litros, Gramos"
+                           required
+                           class="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10" />
+                </div>
+
+                <!-- Campo Abreviatura -->
+                <div class="space-y-2">
+                    <label asp-for="NuevaUnidad.Abreviatura" class="block text-sm font-medium text-zinc-700">
+                        Abreviatura <span class="text-red-600">*</span>
+                    </label>
+                    <input asp-for="NuevaUnidad.Abreviatura"
+                           type="text" 
+                           placeholder="Ej. Kg, L, g"
+                           required
+                           class="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10" />
+                </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="mt-8 flex flex-col gap-3 border-t border-zinc-100 pt-6 sm:flex-row sm:justify-end">
+                <a href="/UnidadesMedida/Index" class="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-200 bg-white px-6 py-2.5 text-sm font-medium text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-800">
+                    Cancelar
+                </a>
+                <button type="submit" id="btnGuardar" class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-red-600 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-red-700">
+                    Guardar Unidad
+                </button>
+            </div>
+        </form>
+    </div>
+</section>

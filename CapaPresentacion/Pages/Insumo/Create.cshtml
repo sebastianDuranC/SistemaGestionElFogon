@@ -1,0 +1,143 @@
+@page
+@model CapaPresentacion.Pages.Insumo.CreateModel
+
+<section class="space-y-5">
+    <!-- Header -->
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+            <h1 class="text-xl font-semibold tracking-tight text-zinc-800">
+                Nuevo Insumo
+            </h1>
+            <p class="mt-1 text-sm text-zinc-500">
+                Ingresar un nuevo insumo al inventario
+            </p>
+        </div>
+        <a href="/Insumo/Index" class="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-800">
+            Volver
+        </a>
+    </div>
+
+    <!-- Formulario -->
+    <div class="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+        <form method="post" enctype="multipart/form-data" class="p-6">
+            
+            <div class="grid gap-6 md:grid-cols-2">
+                <!-- Nombre -->
+                <div class="space-y-2">
+                    <label asp-for="NuevoInsumo.Nombre" class="block text-sm font-medium text-zinc-700">
+                        Nombre del Insumo <span class="text-red-600">*</span>
+                    </label>
+                    <input asp-for="NuevoInsumo.Nombre"
+                           type="text" 
+                           placeholder="Ej. Pollo, Aceite, Vasos Plásticos"
+                           required
+                           class="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10" />
+                </div>
+
+                <!-- Categoría -->
+                <div class="space-y-2">
+                    <label asp-for="NuevoInsumo.InsumoCategoriaId" class="block text-sm font-medium text-zinc-700">
+                        Categoría <span class="text-red-600">*</span>
+                    </label>
+                    <select asp-for="NuevoInsumo.InsumoCategoriaId"
+                            required
+                            class="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10">
+                        <option value="">-- Seleccionar Categoría --</option>
+                        @foreach (var cat in Model.ListaCategorias)
+                        {
+                            <option value="@cat.Id">@cat.Nombre</option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Costo Unitario -->
+                <div class="space-y-2">
+                    <label asp-for="NuevoInsumo.Costo" class="block text-sm font-medium text-zinc-700">
+                        Costo Unitario (Bs.) <span class="text-red-600">*</span>
+                    </label>
+                    <input asp-for="NuevoInsumo.Costo"
+                           type="number" step="0.01"
+                           placeholder="0.00"
+                           required
+                           class="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10" />
+                </div>
+
+                <!-- Unidad de Medida -->
+                <div class="space-y-2">
+                    <label asp-for="NuevoInsumo.UnidadesMedidaId" class="block text-sm font-medium text-zinc-700">
+                        Unidad de Medida <span class="text-red-600">*</span>
+                    </label>
+                    <select asp-for="NuevoInsumo.UnidadesMedidaId"
+                            required
+                            class="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10">
+                        <option value="">-- Seleccionar Unidad --</option>
+                        @foreach (var un in Model.ListaUnidades)
+                        {
+                            <option value="@un.Id">@un.Nombre (@un.Abreviatura)</option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Stock Actual -->
+                <div class="space-y-2">
+                    <label asp-for="NuevoInsumo.Stock" class="block text-sm font-medium text-zinc-700">
+                        Stock Inicial <span class="text-red-600">*</span>
+                    </label>
+                    <input asp-for="NuevoInsumo.Stock"
+                           type="number" step="0.01"
+                           placeholder="0.00"
+                           required
+                           class="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10" />
+                </div>
+
+                <!-- Stock Mínimo -->
+                <div class="space-y-2">
+                    <label asp-for="NuevoInsumo.StockMinimo" class="block text-sm font-medium text-zinc-700">
+                        Stock Mínimo de Alerta <span class="text-red-600">*</span>
+                    </label>
+                    <input asp-for="NuevoInsumo.StockMinimo"
+                           type="number" step="0.01"
+                           placeholder="0.00"
+                           required
+                           class="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10" />
+                </div>
+
+                <!-- Proveedor -->
+                <div class="space-y-2">
+                    <label asp-for="NuevoInsumo.ProveedorId" class="block text-sm font-medium text-zinc-700">
+                        Proveedor <span class="text-red-600">*</span>
+                    </label>
+                    <select asp-for="NuevoInsumo.ProveedorId"
+                            required
+                            class="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10">
+                        <option value="">-- Seleccionar Proveedor --</option>
+                        @foreach (var prov in Model.ListaProveedores)
+                        {
+                            <option value="@prov.Id">@prov.Nombre @prov.Apellido</option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Foto -->
+                <div class="space-y-2">
+                    <label asp-for="Foto" class="block text-sm font-medium text-zinc-700">
+                        Imagen del Insumo
+                    </label>
+                    <input asp-for="Foto"
+                           type="file" accept="image/*"
+                           class="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-zinc-200 file:text-zinc-700 hover:file:bg-zinc-300" />
+                </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="mt-8 flex flex-col gap-3 border-t border-zinc-100 pt-6 sm:flex-row sm:justify-end">
+                <a href="/Insumo/Index" class="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-200 bg-white px-6 py-2.5 text-sm font-medium text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-800">
+                    Cancelar
+                </a>
+                <button type="submit" id="btnGuardar" class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-red-600 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-red-700">
+                    Guardar Insumo
+                </button>
+            </div>
+        </form>
+    </div>
+</section>

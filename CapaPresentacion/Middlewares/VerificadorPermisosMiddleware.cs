@@ -1,4 +1,4 @@
-﻿namespace CapaPresentacion.Middlewares
+namespace CapaPresentacion.Middlewares
 {
     public class VerificadorPermisosMiddleware
     {
@@ -16,7 +16,7 @@
             => _next = Next;
         public async Task InvokeAsync(HttpContext Contexto)
         {
-            //Obtener ruta actual (sin query string)
+            // Obtener ruta actual (sin query string)
             var RutaActual = Contexto.Request.Path.Value;
 
             // 1. Si es ruta pública, dejar pasar sin verificar
@@ -26,12 +26,17 @@
                 return;
             }
 
+            // Intentar obtener la ruta del motor de vistas para Razor Pages (omitiendo parámetros como /id)
+            var Endpoint = Contexto.GetEndpoint();
+            var Descriptor = Endpoint?.Metadata.GetMetadata<Microsoft.AspNetCore.Mvc.RazorPages.PageActionDescriptor>();
+            var RutaParaVerificar = Descriptor?.ViewEnginePath ?? RutaActual ?? string.Empty;
+
             // 2. Verificar si el usuario tiene el claim "Permiso" con esta ruta
             // Nota: La verificación de autenticación la maneja UseAuthorization()
             // que redirige al LoginPath configurado. Si llegamos aquí autenticados,
             // solo resta validar los permisos por ruta.
             var TienePermiso = Contexto.User.Claims
-                .Any(C => C.Type == "Permiso" && C.Value.Equals(RutaActual, StringComparison.OrdinalIgnoreCase));
+                .Any(C => C.Type == "Permiso" && C.Value.Equals(RutaParaVerificar, StringComparison.OrdinalIgnoreCase));
 
             // 3. Si NO tiene permiso, redirigir a Acceso Denegado
             if (!TienePermiso)

@@ -47,6 +47,7 @@ namespace Entidades
     {
         public int Id { get; set; }
         public string Nombre { get; set; }
+        public string Apellido { get; set; }
         public bool EsComerciante { get; set; }
         public string NumeroLocal { get; set; }
         public string Pasillo { get; set; }
@@ -72,8 +73,9 @@ namespace Entidades
     public class Proveedor
     {
         public int Id { get; set; }
-        public string Nombre { get; set; }
-        public string Contacto { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public string Apellido { get; set; } = string.Empty;
+        public string Contacto { get; set; } = string.Empty;
         public bool Estado { get; set; }
     }
     public class Insumo
