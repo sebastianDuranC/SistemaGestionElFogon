@@ -1,0 +1,79 @@
+@page
+@model CapaPresentacion.Pages.MovimientoInventario.CreateModel
+@{
+    ViewData["Title"] = "Registrar Pérdida o Merma";
+}
+
+<section class="space-y-5">
+    <!-- Header -->
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+            <h1 class="text-xl font-semibold tracking-tight text-zinc-800">
+                Registrar Pérdida o Merma
+            </h1>
+            <p class="mt-1 text-sm text-zinc-500">
+                Registrar un descuento de stock manual debido a daño, consumo interno u otras razones
+            </p>
+        </div>
+        <a href="/MovimientoInventario/Index" class="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-800">
+            Volver
+        </a>
+    </div>
+
+    <!-- Formulario -->
+    <div class="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+        <form method="post" class="p-6 space-y-6">
+            
+            <div class="grid gap-6 md:grid-cols-2">
+                <!-- Seleccionar Insumo -->
+                <div class="space-y-2">
+                    <label asp-for="NuevoMovimiento.InsumoId" class="block text-sm font-medium text-zinc-700">
+                        Seleccionar Insumo <span class="text-red-600">*</span>
+                    </label>
+                    <select asp-for="NuevoMovimiento.InsumoId"
+                            required
+                            class="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10 shadow-sm">
+                        <option value="">Seleccione</option>
+                        @foreach (var ins in Model.ListaInsumos)
+                        {
+                            <option value="@ins.Id">@ins.Nombre (Stock: @ins.Stock.ToString("0.00") @ins.NombreMedidas)</option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Cantidad a Descontar -->
+                <div class="space-y-2">
+                    <label asp-for="NuevoMovimiento.Cantidad" class="block text-sm font-medium text-zinc-700">
+                        Cantidad a Descontar <span class="text-red-600">*</span>
+                    </label>
+                    <input asp-for="NuevoMovimiento.Cantidad"
+                           type="number" step="0.01" min="0.01"
+                           placeholder="0.00"
+                           required
+                           class="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10 shadow-sm" />
+                </div>
+            </div>
+
+            <!-- Observación -->
+            <div class="space-y-2">
+                <label asp-for="NuevoMovimiento.Observacion" class="block text-sm font-medium text-zinc-700">
+                    Observación / Motivo
+                </label>
+                <textarea asp-for="NuevoMovimiento.Observacion"
+                          rows="3"
+                          placeholder="Ingrese el motivo de la pérdida (ej. Pollo en mal estado, vaso plástico roto, etc.)"
+                          class="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10 shadow-sm"></textarea>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="mt-8 flex flex-col gap-3 border-t border-zinc-100 pt-6 sm:flex-row sm:justify-end">
+                <a href="/MovimientoInventario/Index" class="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-200 bg-white px-6 py-2.5 text-sm font-medium text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-800">
+                    Cancelar
+                </a>
+                <button type="submit" id="btnGuardar" class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-red-600 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-red-700">
+                    Registrar Merma
+                </button>
+            </div>
+        </form>
+    </div>
+</section>

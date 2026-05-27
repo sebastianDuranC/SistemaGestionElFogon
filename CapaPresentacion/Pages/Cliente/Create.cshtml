@@ -1,0 +1,130 @@
+@page
+@model CapaPresentacion.Pages.Cliente.CreateModel
+@{
+    ViewData["Title"] = "Nuevo Cliente";
+}
+
+<section class="space-y-5">
+    <!-- Header -->
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+            <h1 class="text-xl font-semibold tracking-tight text-zinc-800">
+                Nuevo Cliente
+            </h1>
+            <p class="mt-1 text-sm text-zinc-500">
+                Ingresar un nuevo cliente al sistema
+            </p>
+        </div>
+        <a href="/Cliente/Index" class="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-800">
+            Volver
+        </a>
+    </div>
+
+    <!-- Formulario -->
+    <div class="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+        <form method="post" class="p-6 space-y-6">
+            
+            <div class="grid gap-6 md:grid-cols-2">
+                <!-- Nombre -->
+                <div class="space-y-2">
+                    <label asp-for="NuevoCliente.Nombre" class="block text-sm font-medium text-zinc-700">
+                        Nombre <span class="text-red-600">*</span>
+                    </label>
+                    <input asp-for="NuevoCliente.Nombre"
+                           type="text" 
+                           placeholder="Ingrese el nombre"
+                           required
+                           class="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10 shadow-sm" />
+                </div>
+
+                <!-- Apellido -->
+                <div class="space-y-2">
+                    <label asp-for="NuevoCliente.Apellido" class="block text-sm font-medium text-zinc-700">
+                        Apellido <span class="text-red-600">*</span>
+                    </label>
+                    <input asp-for="NuevoCliente.Apellido"
+                           type="text" 
+                           placeholder="Ingrese el apellido"
+                           required
+                           class="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10 shadow-sm" />
+                </div>
+            </div>
+
+            <!-- Tipo Cliente (Es Comerciante) -->
+            <div class="flex items-center gap-3">
+                <input asp-for="NuevoCliente.EsComerciante" 
+                       type="checkbox" 
+                       id="checkComerciante"
+                       class="h-4 w-4 rounded border-zinc-300 text-red-600 focus:ring-red-500" />
+                <label for="checkComerciante" class="text-sm font-medium text-zinc-700 cursor-pointer">
+                    ¿Es un cliente comerciante? (Tiene local comercial)
+                </label>
+            </div>
+
+            <!-- Campos comerciales condicionales -->
+            <div id="camposComerciales" class="grid gap-6 md:grid-cols-2" style="display: none;">
+                <!-- Numero de Local -->
+                <div class="space-y-2">
+                    <label asp-for="NuevoCliente.NumeroLocal" class="block text-sm font-medium text-zinc-700">
+                        Número de Local <span class="text-red-600">*</span>
+                    </label>
+                    <input asp-for="NuevoCliente.NumeroLocal"
+                           type="text" 
+                           id="inputLocal"
+                           placeholder="Ej. Local 15"
+                           class="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10 shadow-sm" />
+                </div>
+
+                <!-- Pasillo -->
+                <div class="space-y-2">
+                    <label asp-for="NuevoCliente.Pasillo" class="block text-sm font-medium text-zinc-700">
+                        Pasillo <span class="text-red-600">*</span>
+                    </label>
+                    <input asp-for="NuevoCliente.Pasillo"
+                           type="text" 
+                           id="inputPasillo"
+                           placeholder="Ej. Pasillo D"
+                           class="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10 shadow-sm" />
+                </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="mt-8 flex flex-col gap-3 border-t border-zinc-100 pt-6 sm:flex-row sm:justify-end">
+                <a href="/Cliente/Index" class="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-200 bg-white px-6 py-2.5 text-sm font-medium text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-800">
+                    Cancelar
+                </a>
+                <button type="submit" id="btnGuardar" class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-red-600 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-red-700">
+                    Guardar Cliente
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+
+@section Scripts {
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const checkbox = document.getElementById("checkComerciante");
+        const container = document.getElementById("camposComerciales");
+        const local = document.getElementById("inputLocal");
+        const pasillo = document.getElementById("inputPasillo");
+
+        function toggleCampos() {
+            if (checkbox.checked) {
+                container.style.display = "grid";
+                local.required = true;
+                pasillo.required = true;
+            } else {
+                container.style.display = "none";
+                local.required = false;
+                pasillo.required = false;
+                local.value = "";
+                pasillo.value = "";
+            }
+        }
+
+        checkbox.addEventListener("change", toggleCampos);
+        toggleCampos(); // Ejecutar al cargar la página
+    });
+</script>
+}

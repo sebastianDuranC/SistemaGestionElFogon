@@ -1,0 +1,113 @@
+@page
+@model CapaPresentacion.Pages.ControlCaja.CierreModel
+@{
+    ViewData["Title"] = "Cierre de Caja";
+}
+
+<section class="space-y-5">
+    <!-- Header -->
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+            <h1 class="text-xl font-semibold tracking-tight text-zinc-800">
+                Arqueo y Cierre de Caja
+            </h1>
+            <p class="mt-1 text-sm text-zinc-500">
+                Finalizar el turno activo contando el dinero físico del cajón
+            </p>
+        </div>
+        <a href="/ControlCaja/Index" class="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-800">
+            Volver
+        </a>
+    </div>
+
+    <!-- Formulario -->
+    <div class="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm max-w-2xl mx-auto">
+        <form method="post" class="p-6 space-y-6">
+            
+            <!-- Resumen Financiero del Turno -->
+            <div class="rounded-xl border border-zinc-150 bg-zinc-50/50 p-5 space-y-4">
+                <h3 class="text-sm font-bold text-zinc-800 tracking-tight border-b border-zinc-100 pb-2">Resumen Financiero del Turno</h3>
+                
+                <div class="grid grid-cols-2 gap-4 text-sm text-zinc-600">
+                    <div>(+) Monto Apertura Inicial:</div>
+                    <div class="text-right font-medium text-zinc-800">Bs. @Model.Resumen.MontoApertura.ToString("0.00")</div>
+
+                    <div>(+) Ventas en Efectivo:</div>
+                    <div class="text-right font-medium text-zinc-800">Bs. @Model.Resumen.VentasEfectivo.ToString("0.00")</div>
+
+                    <div>(-) Egresos / Retiros:</div>
+                    <div class="text-right font-medium text-red-600">-Bs. @Model.Resumen.TotalEgresos.ToString("0.00")</div>
+
+                    <div class="font-bold border-t border-zinc-100 pt-2 text-zinc-800">(=) Monto Esperado en Caja:</div>
+                    <div class="text-right font-bold text-zinc-900 border-t border-zinc-100 pt-2 text-base" id="montoEsperado" data-esperado="@Model.Resumen.MontoCierreEsperado">
+                        Bs. @Model.Resumen.MontoCierreEsperado.ToString("0.00")
+                    </div>
+                </div>
+            </div>
+
+            <!-- Entrada de Efectivo Real Contado -->
+            <div class="space-y-4 max-w-md mx-auto">
+                <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-zinc-700">
+                        Efectivo Real Contado en Caja (Bs.) <span class="text-red-600">*</span>
+                    </label>
+                    <input asp-for="MontoCierreReal" 
+                           id="inputCierreReal"
+                           type="number" step="0.01" min="0"
+                           required
+                           class="w-full text-center text-xl font-bold rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-zinc-800 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10 shadow-sm" />
+                </div>
+
+                <!-- Diferencial del Arqueo -->
+                <div class="rounded-xl border border-zinc-200 p-4 bg-zinc-50 flex items-center justify-between">
+                    <span class="text-xs font-bold text-zinc-500 uppercase tracking-wider">Diferencia (Arqueo)</span>
+                    <span id="diferencialIndicator" class="text-lg font-bold text-zinc-800">Bs. 0.00</span>
+                </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="mt-8 flex flex-col gap-3 border-t border-zinc-100 pt-6 sm:flex-row sm:justify-end">
+                <a href="/ControlCaja/Index" class="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-200 bg-white px-6 py-2.5 text-sm font-medium text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-800">
+                    Cancelar
+                </a>
+                <button type="submit" class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-red-600 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-red-700">
+                    Confirmar Cierre de Caja
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+
+@section Scripts {
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const inputReal = document.getElementById("inputCierreReal");
+        const esperado = parseFloat(document.getElementById("montoEsperado").getAttribute("data-esperado"));
+        const indicator = document.getElementById("diferencialIndicator");
+
+        function calcularDiferencial() {
+            const real = parseFloat(inputReal.value);
+
+            if (isNaN(real)) {
+                indicator.textContent = "Bs. -";
+                indicator.className = "text-lg font-bold text-zinc-400";
+                return;
+            }
+
+            const diff = real - esperado;
+            indicator.textContent = (diff > 0 ? "+" : "") + "Bs. " + diff.toFixed(2);
+
+            if (diff < 0) {
+                indicator.className = "text-lg font-bold text-red-600";
+            } else if (diff > 0) {
+                indicator.className = "text-lg font-bold text-green-600";
+            } else {
+                indicator.className = "text-lg font-bold text-zinc-600";
+            }
+        }
+
+        inputReal.addEventListener("input", calcularDiferencial);
+        calcularDiferencial(); // Calcular al cargar
+    });
+</script>
+}

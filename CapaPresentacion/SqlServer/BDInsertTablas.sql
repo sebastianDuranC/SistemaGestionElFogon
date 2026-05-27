@@ -78,6 +78,7 @@ VALUES
 ('/ControlCaja/Apertura',           'Apertura de Caja',   'Caja'),
 ('/ControlCaja/Cierre',             'Cierre de Caja',     'Caja'),
 ('/EgresoCaja/Create',              'Egresos',            'Caja'),
+('/Gastos/Index',                   'Gastos operativos',  'Caja'),
 ('/Gastos/Create',                  'Gastos operativos',  'Caja'),
 -- ============================================================
 -- Módulo: Ventas
@@ -147,36 +148,38 @@ VALUES
     (1, 30), -- Cierre de Caja
     (1, 31), -- Egresos
     (1, 32), -- Gastos operativos
+    (1, 33), -- Gastos operativos (Create)
     
     -- Módulo: Ventas
-    (1, 33), -- Ventas
-    (1, 34), -- Ventas (Create)
-    (1, 35), -- Clientes
-    (1, 36), -- Clientes (Create)
-    (1, 37), -- Clientes (Edit)
-    (1, 38), -- Productos
-    (1, 39), -- Productos (Create)
-    (1, 40), -- Productos (Edit)
-    (1, 41), -- Categorías de Productos
-    (1, 42), -- Categorías de Productos (Create)
-    (1, 43), -- Categorías de Productos (Edit)
-    (1, 44), -- Método de Pago
-    (1, 45), -- Método de Pago (Create)
-    (1, 46); -- Método de Pago (Edit)
+    (1, 34), -- Ventas
+    (1, 35), -- Ventas (Create)
+    (1, 36), -- Clientes
+    (1, 37), -- Clientes (Create)
+    (1, 38), -- Clientes (Edit)
+    (1, 39), -- Productos
+    (1, 40), -- Productos (Create)
+    (1, 41), -- Productos (Edit)
+    (1, 42), -- Categorías de Productos
+    (1, 43), -- Categorías de Productos (Create)
+    (1, 44), -- Categorías de Productos (Edit)
+    (1, 45), -- Método de Pago
+    (1, 46), -- Método de Pago (Create)
+    (1, 47); -- Método de Pago (Edit)
 GO
 
 -- CAJERO: solo Ventas, Clientes, Productos, Categorías, Método de Pago, Caja
 INSERT INTO RolPermisos (RolId, PermisosId)
 VALUES
     (2,  1),  -- Dashboard
-    (2, 28),  -- Control de Caja
-    (2, 29),  -- Apertura de Caja
-    (2, 30),  -- Cierre de Caja
-    (2, 33),  -- Ventas
-    (2, 34),  -- Ventas (Create)
-    (2, 35),  -- Clientes
-    (2, 36),  -- Clientes (Create)
-    (2, 37);  -- Clientes (Edit)
+    (1, 28),  -- Control de Caja
+    (1, 29),  -- Apertura de Caja
+    (1, 30),  -- Cierre de Caja
+    (1, 31),  -- Egresos
+    (1, 34),  -- Ventas
+    (1, 35),  -- Ventas (Create)
+    (1, 36),  -- Clientes
+    (1, 37),  -- Clientes (Create)
+    (1, 38);  -- Clientes (Edit)
 GO
 
 INSERT INTO ProductoCategoria (Nombre, Estado) 

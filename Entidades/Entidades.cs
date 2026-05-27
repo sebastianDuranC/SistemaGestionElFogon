@@ -182,36 +182,57 @@ namespace Entidades
         public string NombreUsuario { get; set; }
         public bool Estado { get; set; }
     }
+
     public class ControlCaja
     {
         public int Id { get; set; }
         public DateTime FechaHoraApertura { get; set; }
         public decimal MontoApertura { get; set; }
         public DateTime? FechaHoraCierre { get; set; }
-        public decimal? MontoCierreEsp { get; set; }
+        public decimal? MontoCierreEsperado { get; set; }
         public decimal? MontoCierreReal { get; set; }
         public decimal? Diferencial { get; set; }
         public int UsuarioId { get; set; }
+        public string NombreUsuario { get; set; } = string.Empty;
         public int NegocioId { get; set; }
         public bool Estado { get; set; }
     }
+
     public class GastoOperativo
     {
         public int Id { get; set; }
-        public int ControlCajaId { get; set; }
+        public int UsuarioId { get; set; }
         public DateTime FechaHora { get; set; }
-        public string Concepto { get; set; }
+        public string Concepto { get; set; } = string.Empty;
         public decimal Monto { get; set; }
         public bool Estado { get; set; }
     }
-    public class IngresosEgresosCaja
+
+    public class EgresosCaja
     {
         public int Id { get; set; }
-        public int ControlCajaId { get; set; }
-        public string TipoMovimiento { get; set; } // "Ingreso" o "Egreso"
-        public string Motivo { get; set; }
+        public DateTime Fecha { get; set; }
+        public string Motivo { get; set; } = string.Empty;
         public decimal Monto { get; set; }
+        public int ControlCajaId { get; set; }
+        public int UsuarioId { get; set; }
+        public string NombreUsuario { get; set; } = string.Empty;
+        public bool Estado { get; set; }
+    }
+
+    public class CierreInventario
+    {
+        public int Id { get; set; }
         public DateTime FechaHora { get; set; }
+        public decimal CantidadTeorica { get; set; }
+        public decimal CantidadReal { get; set; }
+        public decimal Diferencia { get; set; }
+        public string Observacion { get; set; } = string.Empty;
+        public int UsuarioId { get; set; }
+        public string NombreUsuario { get; set; } = string.Empty;
+        public int InsumoId { get; set; }
+        public string NombreInsumo { get; set; } = string.Empty;
+        public int ControlCajaId { get; set; }
         public bool Estado { get; set; }
     }
 }

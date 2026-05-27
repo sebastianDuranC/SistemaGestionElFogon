@@ -1,0 +1,174 @@
+@page
+@model CapaPresentacion.Pages.CierreInventario.CreateModel
+@{
+    ViewData["Title"] = "Nuevo Cierre de Inventario";
+}
+
+<section class="space-y-5">
+    <!-- Header -->
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+            <h1 class="text-xl font-semibold tracking-tight text-zinc-800">
+                Nuevo Cierre de Inventario
+            </h1>
+            <p class="mt-1 text-sm text-zinc-500">
+                Realizar auditoría diaria de stock ingresando el conteo físico de los insumos
+            </p>
+        </div>
+        <a href="/CierreInventario/Index" class="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-800">
+            Volver
+        </a>
+    </div>
+
+    <!-- Formulario -->
+    <div class="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+        <form method="post" id="formCierre" class="p-6 space-y-6">
+            <!-- Hidden input to pass data -->
+            <input type="hidden" id="cierreJsonInput" asp-for="CierreJson" />
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-zinc-50 border-b border-zinc-200 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+                        <tr>
+                            <th class="px-5 py-3 w-1/3">Insumo</th>
+                            <th class="px-5 py-3 text-right">Cant. Teórica (Sistema)</th>
+                            <th class="px-5 py-3 text-center w-1/6">Cant. Real (Física)</th>
+                            <th class="px-5 py-3 text-right">Diferencia</th>
+                            <th class="px-5 py-3 w-1/4">Observación / Nota</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-zinc-100">
+                        @foreach (var ins in Model.ListaInsumos)
+                        {
+                            <tr class="insumo-row transition hover:bg-zinc-50" data-id="@ins.Id">
+                                <td class="px-5 py-4">
+                                    <div class="font-medium text-zinc-800">@ins.Nombre</div>
+                                    <div class="text-xs text-zinc-400">@ins.NombreCategoria | @ins.NombreMedidas</div>
+                                </td>
+                                <td class="px-5 py-4 text-right text-zinc-600 font-semibold" data-teorica="@ins.Stock">
+                                    @ins.Stock.ToString("0.00") @ins.NombreMedidas
+                                </td>
+                                <td class="px-5 py-4 text-center">
+                                    <input type="number" step="0.01" min="0" placeholder="0.00"
+                                           class="cantidad-real-input w-24 text-center rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-1.5 text-sm text-zinc-800 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10 shadow-sm" />
+                                </td>
+                                <td class="px-5 py-4 text-right font-semibold text-zinc-400 diferencia-col" data-medida="@ins.NombreMedidas">
+                                    -
+                                </td>
+                                <td class="px-5 py-4">
+                                    <input type="text" placeholder="Ej. Pérdida, merma, rotura"
+                                           class="observacion-input w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-1.5 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10 shadow-sm" />
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="mt-8 flex flex-col gap-3 border-t border-zinc-100 pt-6 sm:flex-row sm:justify-end">
+                <a href="/CierreInventario/Index" class="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-200 bg-white px-6 py-2.5 text-sm font-medium text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-800">
+                    Cancelar
+                </a>
+                <button type="submit" class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-red-600 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-red-700">
+                    Registrar Cierre de Inventario
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+
+@section Scripts {
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const rows = document.querySelectorAll(".insumo-row");
+        const form = document.getElementById("formCierre");
+        const jsonInput = document.getElementById("cierreJsonInput");
+
+        // Escuchar cambios en los inputs para calcular diferencia en tiempo real
+        rows.forEach(row => {
+            const inputReal = row.querySelector(".cantidad-real-input");
+            const teoricaValue = parseFloat(row.querySelector("[data-teorica]").getAttribute("data-teorica"));
+            const diffCol = row.querySelector(".diferencia-col");
+            const medida = diffCol.getAttribute("data-medida");
+
+            inputReal.addEventListener("input", function () {
+                const realValue = parseFloat(inputReal.value);
+
+                if (isNaN(realValue)) {
+                    diffCol.textContent = "-";
+                    diffCol.className = "px-5 py-4 text-right font-semibold text-zinc-400 diferencia-col";
+                    return;
+                }
+
+                const diferencia = realValue - teoricaValue;
+                diffCol.textContent = (diferencia > 0 ? "+" : "") + diferencia.toFixed(2) + " " + medida;
+
+                if (diferencia < 0) {
+                    diffCol.className = "px-5 py-4 text-right font-semibold text-red-600 diferencia-col";
+                } else if (diferencia > 0) {
+                    diffCol.className = "px-5 py-4 text-right font-semibold text-green-600 diferencia-col";
+                } else {
+                    diffCol.className = "px-5 py-4 text-right font-semibold text-zinc-500 diferencia-col";
+                }
+            });
+        });
+
+        // Al enviar el formulario, serializar la tabla a JSON
+        form.addEventListener("submit", function (e) {
+            const data = [];
+            let isValid = true;
+            let countRealEntries = 0;
+
+            rows.forEach(row => {
+                const insumoId = parseInt(row.getAttribute("data-id"));
+                const teoricaValue = parseFloat(row.querySelector("[data-teorica]").getAttribute("data-teorica"));
+                const inputReal = row.querySelector(".cantidad-real-input");
+                const obsInput = row.querySelector(".observacion-input");
+
+                const realValue = parseFloat(inputReal.value);
+
+                // Solo tomamos en cuenta los insumos donde el usuario ingresó algún valor de conteo
+                if (!isNaN(realValue)) {
+                    countRealEntries++;
+
+                    if (realValue < 0) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error de validación',
+                            text: 'La cantidad real no puede ser negativa'
+                        });
+                        isValid = false;
+                        return;
+                    }
+
+                    data.push({
+                        InsumoId: insumoId,
+                        CantidadTeorica: teoricaValue,
+                        CantidadReal: realValue,
+                        Diferencia: realValue - teoricaValue,
+                        Observacion: obsInput.value || ""
+                    });
+                }
+            });
+
+            if (!isValid) {
+                e.preventDefault();
+                return;
+            }
+
+            if (countRealEntries === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Atención',
+                    text: 'Debe ingresar el conteo físico de al menos un insumo para registrar el cierre.'
+                });
+                e.preventDefault();
+                return;
+            }
+
+            jsonInput.value = JSON.stringify(data);
+        });
+    });
+</script>
+}

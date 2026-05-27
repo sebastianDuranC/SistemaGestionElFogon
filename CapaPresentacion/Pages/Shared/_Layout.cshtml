@@ -1,4 +1,4 @@
-﻿@using System.Text.Json
+@using System.Text.Json
 <!DOCTYPE html>
 <html lang="es" class="scroll-smooth">
 <head>
@@ -167,12 +167,52 @@
                             </div>
                         }
                         <!-- CAJA -->
-                        @if (User.HasClaim("Permiso", "/ControlCaja/Index"))
+                        @if (User.HasClaim("Permiso", "/ControlCaja/Index") || User.HasClaim("Permiso", "/Gastos/Index") || User.HasClaim("Permiso", "/EgresoCaja/Index"))
                         {
-                            <a href="/ControlCaja/Index"
-                               class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
-                                Caja
-                            </a>
+                            <div class="relative" data-dropdown="caja">
+                                <button type="button"
+                                        data-dropdown-trigger
+                                        aria-expanded="false"
+                                        aria-controls="menu-caja"
+                                        class="group flex items-center gap-1 rounded-lg px-3 py-2 font-medium text-[15px] text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-900">
+                                    Caja
+                                    <svg data-dropdown-icon
+                                         class="h-4 w-4 transition-transform duration-200"
+                                         fill="none"
+                                         stroke="currentColor"
+                                         viewBox="0 0 24 24">
+                                        <path stroke-linecap="round"
+                                              stroke-linejoin="round"
+                                              stroke-width="2"
+                                              d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div id="menu-caja"
+                                     data-dropdown-menu
+                                     class="pointer-events-none invisible absolute top-full left-0 z-50 mt-2 w-64 -translate-y-2 rounded-xl border border-zinc-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-200 ease-out">
+                                    @if (User.HasClaim("Permiso", "/ControlCaja/Index"))
+                                    {
+                                        <a href="/ControlCaja/Index"
+                                           class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                            Control de Caja
+                                        </a>
+                                    }
+                                    @if (User.HasClaim("Permiso", "/EgresoCaja/Index"))
+                                    {
+                                        <a href="/EgresoCaja/Index"
+                                           class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                            Egresos de caja
+                                        </a>
+                                    }
+                                    @if (User.HasClaim("Permiso", "/Gastos/Index"))
+                                    {
+                                        <a href="/Gastos/Index"
+                                           class="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900">
+                                            Gastos operativos
+                                        </a>
+                                    }
+                                </div>
+                            </div>
                         }
                         <!-- VENTAS -->
                         @if (User.HasClaim("Permiso", "/Venta/Index") || User.HasClaim("Permiso", "/Cliente/Index") || User.HasClaim("Permiso", "/Producto/Index") || User.HasClaim("Permiso", "/ProductoCategoria/Index") || User.HasClaim("Permiso", "/MetodoPago/Index"))

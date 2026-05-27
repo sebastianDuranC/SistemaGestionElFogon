@@ -1,0 +1,88 @@
+@page
+@model CapaPresentacion.Pages.CierreInventario.IndexModel
+@{
+    ViewData["Title"] = "Cierres de Inventario";
+}
+
+<section class="space-y-5">
+    <!-- Header -->
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+            <h1 class="text-xl font-semibold tracking-tight text-zinc-800">
+                Auditorías de Inventario
+            </h1>
+            <p class="mt-1 text-sm text-zinc-500">
+                Historial de conteos físicos y diferencias registradas al final del turno
+            </p>
+        </div>
+        <a href="/CierreInventario/Create" class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Nuevo Cierre de Inventario
+        </a>
+    </div>
+
+    <div class="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+        <!-- Buscador -->
+        <div class="flex flex-col gap-3 border-b border-zinc-100 px-5 py-4 md:flex-row md:items-center md:justify-between">
+            <div class="relative w-full md:max-w-xs">
+                <svg class="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35m1.85-5.15a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" />
+                </svg>
+                <input id="search" type="text" placeholder="Buscar cierre..."
+                       class="w-full rounded-xl border border-zinc-200 bg-zinc-50 py-2 pr-4 pl-10 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10" />
+            </div>
+        </div>
+
+        <!-- Tabla -->
+        <div class="overflow-x-auto">
+            <table id="table" class="w-full text-sm">
+                <thead class="bg-zinc-50">
+                    <tr class="border-b border-zinc-200 text-left text-xs font-semibold tracking-wider text-zinc-500 uppercase">
+                        <th class="px-5 py-3">Fecha y Hora</th>
+                        <th class="px-5 py-3">Insumo</th>
+                        <th class="px-5 py-3 text-right">Cant. Teórica</th>
+                        <th class="px-5 py-3 text-right">Cant. Real</th>
+                        <th class="px-5 py-3 text-right">Diferencia</th>
+                        <th class="px-5 py-3">Observación</th>
+                        <th class="px-5 py-3">Usuario</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-100">
+                    @foreach (var item in Model.ListaCierres)
+                    {
+                        <tr class="transition hover:bg-zinc-50">
+                            <td class="px-5 py-3 text-zinc-600">
+                                @item.FechaHora.ToString("dd/MM/yyyy HH:mm")
+                            </td>
+                            <td class="px-5 py-3 font-medium text-zinc-900">
+                                @item.NombreInsumo
+                            </td>
+                            <td class="px-5 py-3 text-right text-zinc-600">
+                                @item.CantidadTeorica.ToString("0.00")
+                            </td>
+                            <td class="px-5 py-3 text-right text-zinc-950 font-medium">
+                                @item.CantidadReal.ToString("0.00")
+                            </td>
+                            <td class="px-5 py-3 text-right font-semibold @(item.Diferencia < 0 ? "text-red-600" : item.Diferencia > 0 ? "text-green-600" : "text-zinc-600")">
+                                @(item.Diferencia > 0 ? "+" : "")@item.Diferencia.ToString("0.00")
+                            </td>
+                            <td class="px-5 py-3 text-zinc-500 max-w-xs truncate" title="@item.Observacion">
+                                @(string.IsNullOrWhiteSpace(item.Observacion) ? "-" : item.Observacion)
+                            </td>
+                            <td class="px-5 py-3 text-zinc-600">
+                                @item.NombreUsuario
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <!-- Paginación -->
+        <div class="flex flex-col items-center justify-between gap-3 border-t border-zinc-100 px-5 py-4 md:flex-row" id="pagination-container">
+            <div class="text-sm text-zinc-500" id="info"></div>
+            <div class="flex items-center gap-2" id="pagination-buttons"></div>
+        </div>
+    </div>
+</section>
