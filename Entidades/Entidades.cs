@@ -61,7 +61,6 @@ namespace Entidades
         public int ProductoCategoriaId { get; set; }
         public string NombreCategoria { get; set; }
         public string FotoUrl { get; set; }
-        public int Stock { get; set; }             // calculado en el SP
         public bool Estado { get; set; }
     }
     public class ProductoCategoria
@@ -234,5 +233,13 @@ namespace Entidades
         public string NombreInsumo { get; set; } = string.Empty;
         public int ControlCajaId { get; set; }
         public bool Estado { get; set; }
+    }
+
+    public class ControlCajaResumen
+    {
+        public decimal MontoApertura { get; set; }
+        public decimal VentasEfectivo { get; set; }
+        public decimal TotalEgresos { get; set; }
+        public decimal MontoCierreEsperado { get; set; }
     }
 }

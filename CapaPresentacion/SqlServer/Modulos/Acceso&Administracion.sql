@@ -3,14 +3,14 @@ GO
 ------------------------------------------
 --- NEGOCIO
 ------------------------------------------
-CREATE PROCEDURE sp_ListarNegocio
+CREATE OR ALTER PROCEDURE sp_ListarNegocio
 AS BEGIN
 	SELECT Id, Nombre, Direccion, LogoUrl, Estado FROM Negocio
 	WHERE Estado = 1;
 END
 GO
 
-CREATE PROCEDURE sp_ObtenerNegocioPorId
+CREATE OR ALTER PROCEDURE sp_ObtenerNegocioPorId
 	@Id INT
 AS BEGIN
 	SELECT Id, Nombre, Direccion, LogoUrl, Estado FROM Negocio
@@ -18,7 +18,7 @@ AS BEGIN
 END
 GO
 
-CREATE PROCEDURE sp_EditarNegocio
+CREATE OR ALTER PROCEDURE sp_EditarNegocio
 	@Id INT,
 	@Nombre NVARCHAR(100),
 	@Direccion NVARCHAR(200),
@@ -29,10 +29,11 @@ AS BEGIN
 	WHERE Id = @Id AND Estado = 1;
 END
 GO
+
 ------------------------------------------
 --- USUARIOS
 ------------------------------------------
-CREATE PROCEDURE sp_ListarUsuarios
+CREATE OR ALTER PROCEDURE sp_ListarUsuarios
 AS BEGIN
 	SELECT U.Id, U.Nombre, U.Contra, U.RolId, R.Nombre AS NombreRol, U.NegocioId, N.Nombre AS NombreNegocio, U.Estado FROM Usuario AS U
 	INNER JOIN Rol AS R ON U.RolId = R.Id
@@ -41,7 +42,7 @@ AS BEGIN
 END
 GO
 
-CREATE PROCEDURE sp_ObtenerUsuarioPorNombre
+CREATE OR ALTER PROCEDURE sp_ObtenerUsuarioPorNombre
 	@Nombre NVARCHAR(100)
 AS BEGIN
 	SELECT U.Id, U.Nombre, U.Contra, U.RolId, R.Nombre AS NombreRol, U.NegocioId, N.Nombre AS NombreNegocio, U.Estado FROM Usuario AS U
@@ -51,7 +52,7 @@ AS BEGIN
 END
 GO
 
-CREATE PROCEDURE sp_ObtenerUsuarioPorId
+CREATE OR ALTER PROCEDURE sp_ObtenerUsuarioPorId
 	@Id INT
 AS BEGIN
 	SELECT U.Id, U.Nombre, U.Contra, U.RolId, R.Nombre AS NombreRol, U.NegocioId, N.Nombre AS NombreNegocio, U.Estado FROM Usuario AS U
@@ -61,7 +62,7 @@ AS BEGIN
 END
 GO
 
-CREATE PROCEDURE sp_CrearUsuario
+CREATE OR ALTER PROCEDURE sp_CrearUsuario
 	@Nombre NVARCHAR(100),
 	@Contra NVARCHAR(300),
 	@RolId INT,
@@ -73,7 +74,7 @@ AS BEGIN
 END
 GO
 
-CREATE PROCEDURE sp_EditarUsuario
+CREATE OR ALTER PROCEDURE sp_EditarUsuario
 	@Id INT,
 	@Nombre NVARCHAR(100),
 	@Contra NVARCHAR(300),
@@ -87,7 +88,7 @@ AS BEGIN
 END
 GO
 
-CREATE PROCEDURE sp_EliminarUsuario
+CREATE OR ALTER PROCEDURE sp_EliminarUsuario
 	@Id INT
 AS BEGIN
 	UPDATE Usuario
@@ -95,10 +96,11 @@ AS BEGIN
 	WHERE Id = @Id AND Estado = 1;
 END
 GO
+
 ---------------------------------------------
 ---- ROLES
 ---------------------------------------------
-CREATE PROCEDURE sp_ListarRoles
+CREATE OR ALTER PROCEDURE sp_ListarRoles
 AS
 BEGIN
 	SELECT Id, Nombre, Estado FROM Rol
@@ -106,7 +108,7 @@ BEGIN
 END
 GO
 
-CREATE PROCEDURE sp_ObtenerRolPorId
+CREATE OR ALTER PROCEDURE sp_ObtenerRolPorId
 	@Id INT
 AS
 BEGIN
@@ -115,7 +117,7 @@ BEGIN
 END
 GO
 
-CREATE PROCEDURE sp_CrearRol
+CREATE OR ALTER PROCEDURE sp_CrearRol
 	@Nombre NVARCHAR(100),
 	@Estado BIT
 AS BEGIN
@@ -125,7 +127,7 @@ AS BEGIN
 END
 GO
 
-CREATE PROCEDURE sp_EditarRol
+CREATE OR ALTER PROCEDURE sp_EditarRol
 	@Id INT,
 	@Nombre NVARCHAR(100),
 	@Estado BIT
@@ -136,7 +138,7 @@ AS BEGIN
 END
 GO
 
-CREATE PROCEDURE sp_EliminarRol
+CREATE OR ALTER PROCEDURE sp_EliminarRol
 	@Id INT
 AS BEGIN
 	UPDATE Rol
@@ -144,20 +146,22 @@ AS BEGIN
 	WHERE Id = @Id;
 END
 GO
+
 ---------------------------------------------
 ---- PERMISOS
 ---------------------------------------------
-CREATE PROCEDURE sp_ListarPermisos
+CREATE OR ALTER PROCEDURE sp_ListarPermisos
 AS
 BEGIN
 	SELECT Id, FormNombre, FormRuta, Modulo, Estado FROM Permisos
 	WHERE Estado = 1;
 END
 GO
+
 ---------------------------------------------
 ---- ROLPERMISOS
 ---------------------------------------------
-CREATE PROCEDURE sp_ObtenerRutasPermitidasPorRol
+CREATE OR ALTER PROCEDURE sp_ObtenerRutasPermitidasPorRol
     @RolId INT
 AS
 BEGIN --/Dashboard, Venta/Index, Cliente/Index, Usuario/Edit, etc
@@ -167,14 +171,14 @@ BEGIN --/Dashboard, Venta/Index, Cliente/Index, Usuario/Edit, etc
 END
 GO
 
-CREATE PROCEDURE sp_ObtenerPermisosPorRol
+CREATE OR ALTER PROCEDURE sp_ObtenerPermisosPorRol
     @RolId INT
 AS BEGIN
     SELECT PermisosId FROM RolPermisos WHERE RolId = @RolId AND Estado = 1;
 END
 GO
 
-CREATE PROCEDURE sp_ActualizarRolPermisos
+CREATE OR ALTER PROCEDURE sp_ActualizarRolPermisos
     @RolId INT,
     @PermisosIds NVARCHAR(MAX)
 AS BEGIN

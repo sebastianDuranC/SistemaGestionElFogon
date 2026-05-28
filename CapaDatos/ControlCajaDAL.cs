@@ -6,14 +6,6 @@ using System.Linq;
 
 namespace CapaDatos
 {
-    public class ControlCajaResumen
-    {
-        public decimal MontoApertura { get; set; }
-        public decimal VentasEfectivo { get; set; }
-        public decimal TotalEgresos { get; set; }
-        public decimal MontoCierreEsperado { get; set; }
-    }
-
     public class ControlCajaDAL
     {
         private readonly ConexionDAL conexion = new ConexionDAL();
