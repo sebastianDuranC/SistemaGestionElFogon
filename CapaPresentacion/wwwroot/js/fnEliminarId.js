@@ -4,7 +4,7 @@
         text: texto || 'Este registro será eliminado',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#dc2626',
+        confirmButtonColor: '#fa2020',
         cancelButtonColor: '#080708',
         confirmButtonText: 'Sí, eliminar',
         cancelButtonText: 'No',

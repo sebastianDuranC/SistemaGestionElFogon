@@ -201,7 +201,8 @@ namespace Entidades
     {
         public int Id { get; set; }
         public int UsuarioId { get; set; }
-        public DateTime FechaHora { get; set; }
+        public string NombreUsuario { get; set; } = string.Empty;
+        public DateTime Fecha { get; set; }
         public string Concepto { get; set; } = string.Empty;
         public decimal Monto { get; set; }
         public bool Estado { get; set; }

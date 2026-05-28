@@ -1,7 +1,7 @@
-@page
-@model CapaPresentacion.Pages.MetodoPago.IndexModel
+﻿@page
+@model CapaPresentacion.Pages.Gastos.IndexModel
 @{
-    ViewData["Title"] = "Métodos de Pago";
+    ViewData["Title"] = "Gastos Operativos";
 }
 
 <section class="space-y-5">
@@ -9,17 +9,17 @@
     <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
             <h1 class="text-xl font-semibold tracking-tight text-zinc-800">
-                Métodos de Pago
+                Gastos Operativos
             </h1>
             <p class="mt-1 text-sm text-zinc-500">
-                Administración de los métodos de pago aceptados para las ventas del negocio
+                Administración de gastos generales y operativos del negocio
             </p>
         </div>
-        <a href="/MetodoPago/Create" class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700">
+        <a href="/Gastos/Create" class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
-            Nuevo Método de Pago
+            Nuevo Gasto Operativo
         </a>
     </div>
 
@@ -30,7 +30,7 @@
                 <svg class="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35m1.85-5.15a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" />
                 </svg>
-                <input id="search" type="text" placeholder="Buscar método de pago..."
+                <input id="search" type="text" placeholder="Buscar gasto..."
                        class="w-full rounded-xl border border-zinc-200 bg-zinc-50 py-2 pr-4 pl-10 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10" />
             </div>
         </div>
@@ -40,22 +40,30 @@
             <table id="table" class="w-full text-sm">
                 <thead class="bg-zinc-50">
                     <tr class="border-b border-zinc-200 text-left text-xs font-semibold tracking-wider text-zinc-500 uppercase">
-                        <th class="px-5 py-3">#</th>
-                        <th class="px-5 py-3">Nombre</th>
+                        <th class="px-5 py-3">Fecha</th>
+                        <th class="px-5 py-3">Concepto</th>
+                        <th class="px-5 py-3 text-right">Monto</th>
+                        <th class="px-5 py-3">Registrado Por</th>
                         <th class="px-5 py-3 text-right">Acciones</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-zinc-100">
-                    @foreach (var item in Model.ListaMetodosPago)
+                    @foreach (var item in Model.ListaGastos)
                     {
                         <tr class="transition hover:bg-zinc-50">
-                            <td class="px-5 py-3 text-zinc-500">@item.Id</td>
+                            <td class="px-5 py-3 text-zinc-600">@item.Fecha.ToString("dd/MM/yyyy")</td>
                             <td class="px-5 py-3 font-medium text-zinc-900">
-                                @item.Nombre
+                                @item.Concepto
                             </td>
-                            <td class="px-5 py-3">
+                            <td class="px-5 py-3 text-red-600">
+                                Bs. @item.Monto.ToString("0.00")
+                            </td>
+                            <td class="px-5 py-3 text-zinc-600">
+                                @item.NombreUsuario
+                            </td>
+                            <td class="px-5 py-3 font-medium text-zinc-900">
                                 <div class="flex justify-start gap-2">
-                                    <a asp-page="/MetodoPago/Edit"
+                                    <a asp-page="/Gastos/Edit"
                                        asp-route-id="@item.Id"
                                        class="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 text-zinc-500 transition hover:border-yellow-200 hover:bg-yellow-100 hover:text-yellow-400"
                                        aria-label="Editar">
@@ -64,7 +72,7 @@
                                         </svg>
                                     </a>
                                     <button type="button"
-                                            onclick="confirmarEliminacion(@item.Id, 'El método de pago será eliminado')"
+                                            onclick="confirmarEliminacion(@item.Id, 'El gasto operativo será eliminado')"
                                             class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-zinc-200 text-zinc-500 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600">
                                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 7h12m-9 0V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-7 0v11a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V7M10 11v5m4-5v5" />

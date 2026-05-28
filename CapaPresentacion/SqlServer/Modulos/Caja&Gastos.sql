@@ -120,3 +120,62 @@ BEGIN
            (@MontoApertura + @VentasEfectivo - @TotalEgresos) AS MontoCierreEsperado;
 END;
 GO
+
+-- ============================================================
+-- GASTOS OPERATIVOS
+-- ============================================================
+CREATE OR ALTER PROCEDURE sp_ListarGastosOperativos
+AS
+BEGIN
+    SELECT go.Id, go.Fecha, go.Concepto, go.Monto, go.Estado, go.UsuarioId, u.Nombre AS NombreUsuario
+    FROM GastosOperativos go
+    INNER JOIN Usuario u ON go.UsuarioId = u.Id
+    WHERE go.Estado = 1
+    ORDER BY go.Fecha DESC, go.Id DESC;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE sp_ObtenerGastoOperativoPorId
+    @Id INT
+AS
+BEGIN
+    SELECT go.Id, go.Fecha, go.Concepto, go.Monto, go.Estado, go.UsuarioId, u.Nombre AS NombreUsuario
+    FROM GastosOperativos go
+    INNER JOIN Usuario u ON go.UsuarioId = u.Id
+    WHERE go.Id = @Id AND go.Estado = 1;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE sp_CrearGastoOperativo
+    @Concepto NVARCHAR(100),
+    @Monto DECIMAL(10,2),
+    @UsuarioId INT
+AS
+BEGIN
+    INSERT INTO GastosOperativos (Fecha, Concepto, Monto, Estado, UsuarioId)
+    VALUES (GETDATE(), @Concepto, @Monto, 1, @UsuarioId);
+END;
+GO
+
+CREATE OR ALTER PROCEDURE sp_EditarGastoOperativo
+    @Id INT,
+    @Concepto NVARCHAR(100),
+    @Monto DECIMAL(10,2)
+AS
+BEGIN
+    UPDATE GastosOperativos
+    SET Concepto = @Concepto,
+        Monto = @Monto
+    WHERE Id = @Id;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE sp_EliminarGastoOperativo
+    @Id INT
+AS
+BEGIN
+    UPDATE GastosOperativos
+    SET Estado = 0
+    WHERE Id = @Id;
+END;
+GO

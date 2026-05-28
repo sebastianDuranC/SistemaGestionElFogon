@@ -1,0 +1,66 @@
+﻿@page
+@model CapaPresentacion.Pages.Gastos.CreateModel
+@{
+    ViewData["Title"] = "Nuevo Gasto Operativo";
+}
+
+<section class="space-y-5">
+    <!-- Header -->
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+            <h1 class="text-xl font-semibold tracking-tight text-zinc-800">
+                Nuevo Gasto Operativo
+            </h1>
+            <p class="mt-1 text-sm text-zinc-500">
+                Ingresar un nuevo gasto general del negocio
+            </p>
+        </div>
+        <a href="/Gastos/Index" class="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-800">
+            Volver
+        </a>
+    </div>
+
+    <!-- Formulario -->
+    <div class="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+        <form method="post" class="space-y-6 p-6">
+            
+            <div class="grid gap-6 md:grid-cols-2">
+                <!-- Concepto -->
+                <div class="space-y-2">
+                    <label asp-for="NuevoGasto.Concepto" class="block text-sm font-medium text-zinc-700">
+                        Concepto <span class="text-red-600">*</span>
+                    </label>
+                    <input asp-for="NuevoGasto.Concepto"
+                           type="text" 
+                           placeholder="Ej. Compra de gas, Aceite, Impuestos, etc."
+                           required
+                           class="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-700 shadow-sm transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10" />
+                </div>
+
+                <!-- Monto -->
+                <div class="space-y-2">
+                    <label asp-for="NuevoGasto.Monto" class="block text-sm font-medium text-zinc-700">
+                        Monto (Bs.) <span class="text-red-600">*</span>
+                    </label>
+                    <input asp-for="NuevoGasto.Monto"
+                           type="number" 
+                           step="0.01"
+                           min="0.01"
+                           placeholder="0.00"
+                           required
+                           class="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-700 shadow-sm transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10" />
+                </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="mt-8 flex flex-col gap-3 border-t border-zinc-100 pt-6 sm:flex-row sm:justify-end">
+                <a href="/Gastos/Index" class="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-200 bg-white px-6 py-2.5 text-sm font-medium text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-800">
+                    Cancelar
+                </a>
+                <button type="submit" id="btnGuardar" class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-red-600 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-red-700">
+                    Guardar Gasto
+                </button>
+            </div>
+        </form>
+    </div>
+</section>

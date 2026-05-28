@@ -2,7 +2,7 @@ USE Prueba;
 GO
 
 INSERT INTO Negocio (Nombre, Direccion, LogoUrl)
-VALUES ('El Fogón', 'Av. Principal 123, Ciudad', 'C:\\users\\sd858\\Downloads\\logo.png');
+VALUES ('El Fogón', 'Ramada', '');
 GO
 -- ================================================================
 -- ROLES
