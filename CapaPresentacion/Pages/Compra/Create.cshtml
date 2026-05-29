@@ -158,14 +158,13 @@
 @section Scripts {
     <script>
         const carrito = [];
-        const dropdown = document.getElementById('selectProveedor');
-        const buscador = document.getElementById('buscadorInsumos');
-        let prevProveedorId = "";
+        const selectProveedor = document.getElementById('selectProveedor');
+        const inputBuscarInsumo = document.getElementById('buscadorInsumos');
 
-        // Escuchar cambios de Proveedor
-        dropdown.addEventListener('change', function(e) {
-            const selectedVal = this.value;
-            
+        // Al cambiar proveedor: si hay items en carrito, pedir confirmación antes de vaciar
+        selectProveedor.addEventListener('change', function () {
+            const valorSeleccionado = this.value;
+
             if (carrito.length > 0) {
                 Swal.fire({
                     title: '¿Cambiar de proveedor?',
@@ -181,73 +180,66 @@
                     if (result.isConfirmed) {
                         carrito.length = 0;
                         renderizarCarrito();
-                        prevProveedorId = selectedVal;
+                        selectProveedor.dataset.prev = valorSeleccionado;
                         filtrarInsumos();
                     } else {
-                        dropdown.value = prevProveedorId;
+                        selectProveedor.value = selectProveedor.dataset.prev || '';
                     }
                 });
             } else {
-                prevProveedorId = selectedVal;
+                selectProveedor.dataset.prev = valorSeleccionado;
                 filtrarInsumos();
             }
         });
 
-        // Filtrar insumos por proveedor y término de búsqueda
+        // Muestra solo las tarjetas de insumos que coinciden con el proveedor seleccionado y el texto buscado
         function filtrarInsumos() {
-            const providerId = dropdown.value;
-            const term = buscador.value.toLowerCase().trim();
-            const cards = document.querySelectorAll('.insumo-card');
-            const banner = document.getElementById('bannerSeleccionarProveedor');
+            const proveedorId = selectProveedor.value;
+            const terminoBusqueda = inputBuscarInsumo.value.toLowerCase().trim();
+            const tarjetasInsumo = document.querySelectorAll('.insumo-card');
+            const bannerSinProveedor = document.getElementById('bannerSeleccionarProveedor');
             const sinResultados = document.getElementById('sinResultados');
 
-            if (!providerId) {
-                banner.style.display = 'flex';
+            if (!proveedorId) {
+                bannerSinProveedor.style.display = 'flex';
                 sinResultados.style.display = 'none';
-                buscador.disabled = true;
-                buscador.classList.replace('bg-zinc-50', 'bg-zinc-100');
-                cards.forEach(card => card.style.display = 'none');
+                inputBuscarInsumo.disabled = true;
+                inputBuscarInsumo.classList.replace('bg-zinc-50', 'bg-zinc-100');
+                tarjetasInsumo.forEach(card => card.style.display = 'none');
                 return;
             }
 
-            banner.style.display = 'none';
-            buscador.disabled = false;
-            buscador.classList.replace('bg-zinc-100', 'bg-zinc-50');
+            bannerSinProveedor.style.display = 'none';
+            inputBuscarInsumo.disabled = false;
+            inputBuscarInsumo.classList.replace('bg-zinc-100', 'bg-zinc-50');
 
-            let countVisible = 0;
-            cards.forEach(card => {
-                const cardProvId = card.getAttribute('data-proveedor-id');
-                const nombre = card.getAttribute('data-nombre');
-                const matchesProvider = cardProvId === providerId;
-                const matchesSearch = nombre.includes(term);
+            let cantidadVisibles = 0;
+            tarjetasInsumo.forEach(card => {
+                const coincideProveedor = card.dataset.proveedorId === proveedorId;
+                const coincideBusqueda = card.dataset.nombre.includes(terminoBusqueda);
 
-                if (matchesProvider && matchesSearch) {
+                if (coincideProveedor && coincideBusqueda) {
                     card.style.display = 'flex';
-                    countVisible++;
+                    cantidadVisibles++;
                 } else {
                     card.style.display = 'none';
                 }
             });
 
-            sinResultados.style.display = countVisible === 0 ? 'flex' : 'none';
+            sinResultados.style.display = cantidadVisibles === 0 ? 'flex' : 'none';
         }
 
-        // Buscador reactivo dentro del catálogo visible
-        buscador.addEventListener('input', filtrarInsumos);
+        // Cada vez que el usuario escribe en el buscador, se re-filtran las tarjetas
+        inputBuscarInsumo.addEventListener('input', filtrarInsumos);
 
-        // Carrito
+        // --- Gestión del carrito de compra ---
+
         function agregarInsumo(id, nombre, costoBase, unidadMedida) {
-            const index = carrito.findIndex(i => i.id === id);
-            if (index !== -1) {
-                carrito[index].cantidad += 1;
+            const existente = carrito.find(i => i.id === id);
+            if (existente) {
+                existente.cantidad += 1;
             } else {
-                carrito.push({
-                    id: id,
-                    nombre: nombre,
-                    cantidad: 1,
-                    costo: parseFloat(costoBase),
-                    unidad: unidadMedida
-                });
+                carrito.push({ id, nombre, cantidad: 1, costo: parseFloat(costoBase), unidad: unidadMedida });
             }
             renderizarCarrito();
         }
@@ -260,94 +252,86 @@
             }
         }
 
+        // Actualiza cantidad o costo de un item del carrito y recalcula su subtotal en pantalla
         function actualizarValor(id, tipo, valor) {
             const item = carrito.find(i => i.id === id);
-            if (item) {
-                const num = parseFloat(valor) || 0;
-                if (tipo === 'cantidad') item.cantidad = num;
-                else if (tipo === 'costo') item.costo = num;
-                
-                // Actualizar subtotal e importe total en el DOM sin re-renderizar todo para mantener foco
-                const subtotal = item.cantidad * item.costo;
-                const subElem = document.getElementById(`subtotal_${id}`);
-                if (subElem) subElem.innerText = `Bs. ${subtotal.toFixed(2)}`;
-                
-                calcularTotalGeneral();
-            }
+            if (!item) return;
+
+            item[tipo] = parseFloat(valor) || 0;
+
+            const elementoSubtotal = document.getElementById(`subtotal_${id}`);
+            if (elementoSubtotal) elementoSubtotal.innerText = `Bs. ${(item.cantidad * item.costo).toFixed(2)}`;
+
+            calcularTotalGeneral();
         }
 
-        // Calcular total general usando reduce
+        // Suma todos los subtotales del carrito y actualiza el label del total
         function calcularTotalGeneral() {
             const total = carrito.reduce((sum, item) => sum + (item.cantidad * item.costo), 0);
             document.getElementById('lblTotalGeneral').innerText = `Bs. ${total.toFixed(2)}`;
         }
 
+        // Reconstruye todo el HTML del carrito a partir del array y recalcula totales
         function renderizarCarrito() {
-            const lista = document.getElementById('listaResumen');
-            const msjVacio = document.getElementById('mensajeVacio');
-            
-            lista.innerHTML = '';
-            
+            const contenedorItems = document.getElementById('listaResumen');
+            const mensajeCarritoVacio = document.getElementById('mensajeVacio');
+
+            contenedorItems.innerHTML = '';
+
             if (carrito.length === 0) {
-                msjVacio.style.display = 'flex';
+                mensajeCarritoVacio.style.display = 'flex';
                 calcularTotalGeneral();
                 return;
-            } else {
-                msjVacio.style.display = 'none';
             }
+
+            mensajeCarritoVacio.style.display = 'none';
 
             carrito.forEach(item => {
                 const subtotal = item.cantidad * item.costo;
-                const html = `
+                contenedorItems.insertAdjacentHTML('beforeend', `
                     <div class="group relative border-b border-zinc-100 py-3.5 last:border-0">
-                        <!-- Quitar Item -->
                         <button type="button" onclick="removerInsumo(${item.id})" class="absolute top-3.5 right-0 text-zinc-400 transition-colors hover:text-red-500" title="Quitar">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </button>
-                        
-                        <!-- Inputs ocultos para binding -->
+
                         <input type="hidden" name="InsumoSeleccionadoId" value="${item.id}" />
-                        
+
                         <div class="pr-6">
                             <h4 class="mb-1 text-sm leading-tight font-semibold text-zinc-800">${item.nombre}</h4>
                             <p class="mb-2 text-xs text-zinc-400">Unidad: ${item.unidad}</p>
-                            
+
                             <div class="flex items-center justify-between gap-2">
-                                <!-- Cantidad -->
                                 <div class="flex w-24 flex-col gap-1">
                                     <label class="font-semibold text-[10px] text-zinc-400 uppercase">Cant.</label>
                                     <div class="flex h-8 items-center overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50">
-                                        <input type="number" name="InsumoSeleccionadoCantidad" value="${item.cantidad}" min="0.01" step="0.01" onchange="actualizarValor(${item.id}, 'cantidad', this.value)" onkeyup="actualizarValor(${item.id}, 'cantidad', this.value)" class="hide-arrows h-full w-full bg-transparent text-center text-xs font-medium text-zinc-700 focus:outline-none" />
+                                        <input type="number" name="InsumoSeleccionadoCantidad" value="${item.cantidad}" min="0.01" step="0.01" oninput="actualizarValor(${item.id}, 'cantidad', this.value)" class="hide-arrows h-full w-full bg-transparent text-center text-xs font-medium text-zinc-700 focus:outline-none" />
                                     </div>
                                 </div>
-                                
+
                                 <span class="pt-4 text-xs text-zinc-400">×</span>
-                                
-                                <!-- Costo Unitario -->
+
                                 <div class="flex w-24 flex-col gap-1">
                                     <label class="font-semibold text-[10px] text-zinc-400 uppercase">Costo U.</label>
                                     <div class="relative flex h-8 items-center overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50">
                                         <span class="absolute left-2 text-[10px] text-zinc-400">Bs.</span>
-                                        <input type="number" name="InsumoSeleccionadoCosto" value="${item.costo.toFixed(2)}" min="0.00" step="0.01" onchange="actualizarValor(${item.id}, 'costo', this.value)" onkeyup="actualizarValor(${item.id}, 'costo', this.value)" class="hide-arrows h-full w-full bg-transparent pr-2 pl-6 text-right text-xs font-medium text-zinc-700 focus:outline-none" />
+                                        <input type="number" name="InsumoSeleccionadoCosto" value="${item.costo.toFixed(2)}" min="0.00" step="0.01" oninput="actualizarValor(${item.id}, 'costo', this.value)" class="hide-arrows h-full w-full bg-transparent pr-2 pl-6 text-right text-xs font-medium text-zinc-700 focus:outline-none" />
                                     </div>
                                 </div>
                             </div>
-                            
-                            <!-- Subtotal Fila -->
+
                             <div class="mt-2 text-right">
                                 <span class="text-xs font-bold text-zinc-800" id="subtotal_${item.id}">Bs. ${subtotal.toFixed(2)}</span>
                             </div>
                         </div>
                     </div>
-                `;
-                lista.insertAdjacentHTML('beforeend', html);
+                `);
             });
 
             calcularTotalGeneral();
         }
 
-        // Validación submit
-        document.getElementById('formCompra').addEventListener('submit', function(e) {
+        // Antes de enviar el formulario, verificar que el carrito no esté vacío
+        document.getElementById('formCompra').addEventListener('submit', function (e) {
             if (carrito.length === 0) {
                 e.preventDefault();
                 Swal.fire({

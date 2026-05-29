@@ -54,9 +54,6 @@
                         <td class="px-5 py-3 text-zinc-600">@item.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
                         <td class="px-5 py-3">
                             <div class="flex items-center gap-2">
-                                <div class="flex h-7 w-7 items-center justify-center rounded-full bg-red-50 font-bold text-[11px] text-red-600">
-                                    @(item.NombreProveedor?.Length > 0 ? item.NombreProveedor.Substring(0, 1).ToUpper() : "?")
-                                </div>
                                 <span class="font-medium text-zinc-900">@item.NombreProveedor</span>
                             </div>
                         </td>
