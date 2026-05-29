@@ -165,7 +165,8 @@ namespace Entidades
         public int InsumoId { get; set; }
         public string NombreInsumo { get; set; }
         public decimal Cantidad { get; set; }
-        public decimal Costo { get; set; }
+        public decimal CostoUnitario { get; set; }
+        public decimal Subtotal { get; set; }
         public bool Estado { get; set; }
     }
     public class MovimientoInventario

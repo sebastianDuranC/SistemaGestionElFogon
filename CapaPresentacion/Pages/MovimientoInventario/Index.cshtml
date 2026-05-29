@@ -1,4 +1,4 @@
-@page
+﻿@page
 @model CapaPresentacion.Pages.MovimientoInventario.IndexModel
 @{
     ViewData["Title"] = "Movimientos de Inventario";
@@ -65,7 +65,7 @@
                                 }
                                 else if (item.TipoMovimiento == "Salida")
                                 {
-                                    <span class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700">@item.TipoMovimiento</span>
+                                    <span class="inline-flex items-center rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-medium text-red-700">@item.TipoMovimiento</span>
                                 }
                                 else if (item.TipoMovimiento == "Merma")
                                 {
@@ -76,10 +76,10 @@
                                     <span class="inline-flex items-center rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium text-zinc-800">@item.TipoMovimiento</span>
                                 }
                             </td>
-                            <td class="px-5 py-3 font-semibold @(item.Cantidad < 0 ? "text-red-600" : "text-green-600")">
-                                @(item.Cantidad > 0 ? "+" : "")@item.Cantidad.ToString("0.00")
+                            <td class="px-5 py-3 font-semibold">
+                                @item.Cantidad.ToString("0.00")
                             </td>
-                            <td class="px-5 py-3 text-zinc-500 max-w-xs truncate" title="@item.Observacion">
+                            <td class="max-w-xs truncate px-5 py-3 text-zinc-500" title="@item.Observacion">
                                 @(string.IsNullOrWhiteSpace(item.Observacion) ? "-" : item.Observacion)
                             </td>
                             <td class="px-5 py-3 text-zinc-600">

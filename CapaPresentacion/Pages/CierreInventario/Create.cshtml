@@ -1,9 +1,5 @@
-@page
+﻿@page
 @model CapaPresentacion.Pages.CierreInventario.CreateModel
-@{
-    ViewData["Title"] = "Nuevo Cierre de Inventario";
-}
-
 <section class="space-y-5">
     <!-- Header -->
     <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -22,19 +18,30 @@
 
     <!-- Formulario -->
     <div class="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
-        <form method="post" id="formCierre" class="p-6 space-y-6">
-            <!-- Hidden input to pass data -->
+        <form method="post" id="formCierre" class="space-y-6 p-6">
+            <!-- input oculto para pasar los daots -->
             <input type="hidden" id="cierreJsonInput" asp-for="CierreJson" />
+
+            <!-- Buscador de Insumos -->
+            <div class="relative w-full md:max-w-md">
+                <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    <svg class="h-4 w-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35m1.85-5.15a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" />
+                    </svg>
+                </span>
+                <input type="text" id="buscadorInsumos" placeholder="Buscar insumo por nombre o categoría..."
+                       class="w-full rounded-xl border border-zinc-200 bg-zinc-50 py-2 pr-4 pl-10 text-sm text-zinc-700 shadow-sm transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10" />
+            </div>
 
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
-                    <thead class="bg-zinc-50 border-b border-zinc-200 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+                    <thead class="border-b border-zinc-200 bg-zinc-50 text-left text-xs font-semibold tracking-wider text-zinc-500 uppercase">
                         <tr>
-                            <th class="px-5 py-3 w-1/3">Insumo</th>
-                            <th class="px-5 py-3 text-right">Cant. Teórica (Sistema)</th>
-                            <th class="px-5 py-3 text-center w-1/6">Cant. Real (Física)</th>
+                            <th class="w-1/3 px-5 py-3">Insumo</th>
+                            <th class="px-5 py-3 text-right">Cant. en Sistema</th>
+                            <th class="w-1/6 px-5 py-3 text-center">Cant. Real / Física</th>
                             <th class="px-5 py-3 text-right">Diferencia</th>
-                            <th class="px-5 py-3 w-1/4">Observación / Nota</th>
+                            <th class="w-1/4 px-5 py-3">Observación / Nota</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-zinc-100">
@@ -42,22 +49,22 @@
                         {
                             <tr class="insumo-row transition hover:bg-zinc-50" data-id="@ins.Id">
                                 <td class="px-5 py-4">
-                                    <div class="font-medium text-zinc-800">@ins.Nombre</div>
-                                    <div class="text-xs text-zinc-400">@ins.NombreCategoria | @ins.NombreMedidas</div>
+                                    <div class="ninsumo font-medium text-zinc-800">@ins.Nombre</div>
+                                    <div class="ncategoria text-xs text-zinc-400">@ins.NombreCategoria | @ins.NombreMedidas</div>
                                 </td>
-                                <td class="px-5 py-4 text-right text-zinc-600 font-semibold" data-teorica="@ins.Stock">
+                                <td class="px-5 py-4 text-right font-semibold text-zinc-600" data-teorica="@ins.Stock">
                                     @ins.Stock.ToString("0.00") @ins.NombreMedidas
                                 </td>
                                 <td class="px-5 py-4 text-center">
                                     <input type="number" step="0.01" min="0" placeholder="0.00"
-                                           class="cantidad-real-input w-24 text-center rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-1.5 text-sm text-zinc-800 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10 shadow-sm" />
+                                           class="cantidad-real-input w-24 rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-1.5 text-center text-sm text-zinc-800 shadow-sm transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10" />
                                 </td>
-                                <td class="px-5 py-4 text-right font-semibold text-zinc-400 diferencia-col" data-medida="@ins.NombreMedidas">
+                                <td class="diferencia-col px-5 py-4 text-right font-semibold text-zinc-400" data-medida="@ins.NombreMedidas">
                                     -
                                 </td>
                                 <td class="px-5 py-4">
                                     <input type="text" placeholder="Ej. Pérdida, merma, rotura"
-                                           class="observacion-input w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-1.5 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10 shadow-sm" />
+                                           class="observacion-input w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-1.5 text-sm text-zinc-700 shadow-sm transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10" />
                                 </td>
                             </tr>
                         }
@@ -81,10 +88,25 @@
 @section Scripts {
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        // Buscador dinámico de insumos
+        const buscador = document.getElementById("buscadorInsumos");
+        buscador.addEventListener("input", function () {
+            const filtro = buscador.value.toLowerCase().trim();
+            rows.forEach(row => {
+                    const nombre = row.querySelector(".ninsumo").textContent.toLowerCase();
+                    const categoria = row.querySelector(".ncategoria").textContent.toLowerCase();
+                    if (nombre.includes(filtro) || categoria.includes(filtro)) 
+                    {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+            });
+        });
+
         const rows = document.querySelectorAll(".insumo-row");
         const form = document.getElementById("formCierre");
         const jsonInput = document.getElementById("cierreJsonInput");
-
         // Escuchar cambios en los inputs para calcular diferencia en tiempo real
         rows.forEach(row => {
             const inputReal = row.querySelector(".cantidad-real-input");

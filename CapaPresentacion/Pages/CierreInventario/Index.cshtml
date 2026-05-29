@@ -1,4 +1,4 @@
-@page
+﻿@page
 @model CapaPresentacion.Pages.CierreInventario.IndexModel
 @{
     ViewData["Title"] = "Cierres de Inventario";
@@ -42,9 +42,9 @@
                     <tr class="border-b border-zinc-200 text-left text-xs font-semibold tracking-wider text-zinc-500 uppercase">
                         <th class="px-5 py-3">Fecha y Hora</th>
                         <th class="px-5 py-3">Insumo</th>
-                        <th class="px-5 py-3 text-right">Cant. Teórica</th>
-                        <th class="px-5 py-3 text-right">Cant. Real</th>
-                        <th class="px-5 py-3 text-right">Diferencia</th>
+                        <th class="px-5 py-3">Cant. Teórica</th>
+                        <th class="px-5 py-3">Cant. Real</th>
+                        <th class="px-5 py-3">Diferencia</th>
                         <th class="px-5 py-3">Observación</th>
                         <th class="px-5 py-3">Usuario</th>
                     </tr>
@@ -62,13 +62,13 @@
                             <td class="px-5 py-3 text-right text-zinc-600">
                                 @item.CantidadTeorica.ToString("0.00")
                             </td>
-                            <td class="px-5 py-3 text-right text-zinc-950 font-medium">
+                            <td class="px-5 py-3 text-right font-medium text-zinc-950">
                                 @item.CantidadReal.ToString("0.00")
                             </td>
                             <td class="px-5 py-3 text-right font-semibold @(item.Diferencia < 0 ? "text-red-600" : item.Diferencia > 0 ? "text-green-600" : "text-zinc-600")">
                                 @(item.Diferencia > 0 ? "+" : "")@item.Diferencia.ToString("0.00")
                             </td>
-                            <td class="px-5 py-3 text-zinc-500 max-w-xs truncate" title="@item.Observacion">
+                            <td class="max-w-xs truncate px-5 py-3 text-zinc-500" title="@item.Observacion">
                                 @(string.IsNullOrWhiteSpace(item.Observacion) ? "-" : item.Observacion)
                             </td>
                             <td class="px-5 py-3 text-zinc-600">

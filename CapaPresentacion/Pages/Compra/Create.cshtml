@@ -1,0 +1,373 @@
+@page
+@model CapaPresentacion.Pages.Compra.CreateModel
+
+<section class="space-y-5">
+    <!-- Header -->
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+            <h1 class="text-xl font-semibold tracking-tight text-zinc-800">
+                Nueva Compra
+            </h1>
+            <p class="mt-1 text-sm text-zinc-500">
+                Registrar una nueva adquisición de insumos en el sistema
+            </p>
+        </div>
+        <a href="/Compra/Index" class="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-800">
+            Volver
+        </a>
+    </div>
+
+    <!-- Layout de Dos Columnas -->
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <!-- Columna Izquierda: Catálogo (2/3 de ancho) -->
+        <div class="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm lg:col-span-2">
+            <div class="flex flex-col items-start justify-between gap-3 border-b border-zinc-100 pb-4 sm:flex-row sm:items-center">
+                <div>
+                    <h2 class="font-semibold text-[15px] text-zinc-800">1. Catálogo de Insumos</h2>
+                    <p class="text-xs text-zinc-500">Selecciona los insumos provistos por el proveedor</p>
+                </div>
+                <!-- Buscador de Insumos -->
+                <div class="relative w-full sm:max-w-xs">
+                    <svg class="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35m1.85-5.15a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" />
+                    </svg>
+                    <input id="buscadorInsumos" type="text" placeholder="Buscar insumo..." disabled
+                           class="w-full rounded-xl border border-zinc-200 bg-zinc-100 py-2 pr-4 pl-10 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10 disabled:cursor-not-allowed disabled:opacity-60" />
+                </div>
+            </div>
+
+            <!-- Contenedor del Catálogo de Insumos -->
+            <div class="overflow-y-auto pr-1" style="max-height: calc(100vh - 320px);">
+                <div class="grid grid-cols-2 gap-4 md:grid-cols-3" id="contenedorInsumos">
+                    <!-- Banner Inicial -->
+                    <div id="bannerSeleccionarProveedor" class="col-span-full flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-zinc-200 bg-zinc-50 px-4 py-16 text-center">
+                        <svg class="mx-auto mb-3 h-12 w-12 text-zinc-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        <h3 class="text-sm font-semibold text-zinc-700">Seleccione un Proveedor</h3>
+                        <p class="mt-1 max-w-xs text-xs text-zinc-500">Debe elegir un proveedor de la lista de la derecha para ver los insumos que suministra.</p>
+                    </div>
+
+                    <!-- Mensaje de Búsqueda sin Resultados -->
+                    <div id="sinResultados" class="col-span-full flex hidden flex-col items-center justify-center rounded-2xl border border-zinc-100 bg-zinc-50 px-4 py-16 text-center">
+                        <svg class="mx-auto mb-2 h-10 w-10 text-zinc-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <h3 class="text-sm font-semibold text-zinc-600">No se encontraron insumos</h3>
+                        <p class="mt-1 text-xs text-zinc-400">Intente buscar otro término o cambie de proveedor.</p>
+                    </div>
+
+                    <!-- Tarjetas de Insumos -->
+                    @foreach (var insumo in Model.ListaInsumos)
+                    {
+                        <div class="insumo-card flex flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition duration-200 hover:shadow-md" 
+                             data-nombre="@insumo.Nombre.ToLower()" 
+                             data-proveedor-id="@insumo.ProveedorId"
+                             style="display: none;">
+                            <div class="relative flex h-32 items-center justify-center overflow-hidden border-b border-zinc-100 bg-zinc-50">
+                                @if (!string.IsNullOrEmpty(insumo.FotoUrl))
+                                {
+                                    <img src="@insumo.FotoUrl" alt="@insumo.Nombre" class="h-full w-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                                    <div class="hidden h-full w-full items-center justify-center bg-zinc-50 text-zinc-400">
+                                        <svg class="h-8 w-8 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="flex h-full w-full items-center justify-center bg-zinc-50 text-zinc-400">
+                                        <svg class="h-8 w-8 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                    </div>
+                                }
+                            </div>
+                            <div class="flex flex-1 flex-col justify-between gap-3 p-4">
+                                <div>
+                                    <h3 class="line-clamp-2 leading-tight font-semibold text-zinc-800 text-[14px]" title="@insumo.Nombre">@insumo.Nombre</h3>
+                                    <p class="mt-1 text-xs text-zinc-500">Stock: <span class="font-medium text-zinc-700">@insumo.Stock.ToString("N2") @insumo.NombreMedidas</span></p>
+                                </div>
+                                <div class="mt-auto flex items-center justify-between gap-2">
+                                    <span class="font-bold text-[13px] text-zinc-800">Bs. @insumo.Costo.ToString("N2")</span>
+                                    <button type="button" 
+                                            onclick="agregarInsumo(@insumo.Id, '@insumo.Nombre', @insumo.Costo.ToString(System.Globalization.CultureInfo.InvariantCulture), '@insumo.NombreMedidas')" 
+                                            class="flex h-8 w-8 items-center justify-center rounded-full bg-red-600 text-white transition hover:bg-red-700" 
+                                            title="Agregar Insumo">
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna Derecha: Resumen de Compra (1/3 de ancho) -->
+        <div class="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
+            <div>
+                <h2 class="font-semibold text-[15px] text-zinc-800">2. Resumen de Compra</h2>
+                <p class="text-xs text-zinc-500">Completa los datos del proveedor y del carrito</p>
+            </div>
+
+            <form method="post" id="formCompra" class="flex flex-1 flex-col gap-4">
+                <!-- Dropdown Proveedor -->
+                <div class="space-y-1.5">
+                    <label for="ProveedorId" class="block text-xs font-semibold tracking-wider text-zinc-500 uppercase">Proveedor <span class="text-red-600">*</span></label>
+                    <select asp-for="ProveedorId" id="selectProveedor" class="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10" required>
+                        <option value="">-- Seleccione un Proveedor --</option>
+                        @foreach (var p in Model.ListaProveedores)
+                        {
+                            <option value="@p.Id">@p.Nombre @p.Apellido</option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Lista del Carrito -->
+                <div class="flex-1 overflow-y-auto border-t border-b border-zinc-100 py-3" style="min-height: 250px; max-height: calc(100vh - 460px);">
+                    <div id="mensajeVacio" class="flex flex-col items-center justify-center gap-2 py-12 text-center text-xs text-zinc-400">
+                        <svg class="h-8 w-8 text-zinc-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                        </svg>
+                        <span>El carrito está vacío. Agregue insumos de la lista.</span>
+                    </div>
+                    <div id="listaResumen"></div>
+                </div>
+
+                <!-- Totales y Enviar -->
+                <div class="space-y-4 rounded-xl border border-zinc-100 bg-zinc-50 p-4">
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="font-medium text-zinc-600">Total Compra:</span>
+                        <span class="text-xl font-bold text-red-600" id="lblTotalGeneral">Bs. 0.00</span>
+                    </div>
+                    <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 font-medium text-white shadow-sm transition duration-200 hover:bg-red-700 hover:shadow">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
+                        Registrar Compra
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        const carrito = [];
+        const dropdown = document.getElementById('selectProveedor');
+        const buscador = document.getElementById('buscadorInsumos');
+        let prevProveedorId = "";
+
+        // Escuchar cambios de Proveedor
+        dropdown.addEventListener('change', function(e) {
+            const selectedVal = this.value;
+            
+            if (carrito.length > 0) {
+                Swal.fire({
+                    title: '¿Cambiar de proveedor?',
+                    text: 'Si cambias de proveedor, se vaciará el carrito de insumos de esta compra.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#fa2020',
+                    cancelButtonColor: '#080708',
+                    confirmButtonText: 'Sí, cambiar',
+                    cancelButtonText: 'No, mantener',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        carrito.length = 0;
+                        renderizarCarrito();
+                        prevProveedorId = selectedVal;
+                        filtrarInsumos();
+                    } else {
+                        dropdown.value = prevProveedorId;
+                    }
+                });
+            } else {
+                prevProveedorId = selectedVal;
+                filtrarInsumos();
+            }
+        });
+
+        // Filtrar insumos por proveedor y término de búsqueda
+        function filtrarInsumos() {
+            const providerId = dropdown.value;
+            const term = buscador.value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.insumo-card');
+            const banner = document.getElementById('bannerSeleccionarProveedor');
+            const sinResultados = document.getElementById('sinResultados');
+
+            if (!providerId) {
+                banner.style.display = 'flex';
+                sinResultados.style.display = 'none';
+                buscador.disabled = true;
+                buscador.classList.replace('bg-zinc-50', 'bg-zinc-100');
+                cards.forEach(card => card.style.display = 'none');
+                return;
+            }
+
+            banner.style.display = 'none';
+            buscador.disabled = false;
+            buscador.classList.replace('bg-zinc-100', 'bg-zinc-50');
+
+            let countVisible = 0;
+            cards.forEach(card => {
+                const cardProvId = card.getAttribute('data-proveedor-id');
+                const nombre = card.getAttribute('data-nombre');
+                const matchesProvider = cardProvId === providerId;
+                const matchesSearch = nombre.includes(term);
+
+                if (matchesProvider && matchesSearch) {
+                    card.style.display = 'flex';
+                    countVisible++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            sinResultados.style.display = countVisible === 0 ? 'flex' : 'none';
+        }
+
+        // Buscador reactivo dentro del catálogo visible
+        buscador.addEventListener('input', filtrarInsumos);
+
+        // Carrito
+        function agregarInsumo(id, nombre, costoBase, unidadMedida) {
+            const index = carrito.findIndex(i => i.id === id);
+            if (index !== -1) {
+                carrito[index].cantidad += 1;
+            } else {
+                carrito.push({
+                    id: id,
+                    nombre: nombre,
+                    cantidad: 1,
+                    costo: parseFloat(costoBase),
+                    unidad: unidadMedida
+                });
+            }
+            renderizarCarrito();
+        }
+
+        function removerInsumo(id) {
+            const index = carrito.findIndex(i => i.id === id);
+            if (index !== -1) {
+                carrito.splice(index, 1);
+                renderizarCarrito();
+            }
+        }
+
+        function actualizarValor(id, tipo, valor) {
+            const item = carrito.find(i => i.id === id);
+            if (item) {
+                const num = parseFloat(valor) || 0;
+                if (tipo === 'cantidad') item.cantidad = num;
+                else if (tipo === 'costo') item.costo = num;
+                
+                // Actualizar subtotal e importe total en el DOM sin re-renderizar todo para mantener foco
+                const subtotal = item.cantidad * item.costo;
+                const subElem = document.getElementById(`subtotal_${id}`);
+                if (subElem) subElem.innerText = `Bs. ${subtotal.toFixed(2)}`;
+                
+                calcularTotalGeneral();
+            }
+        }
+
+        // Calcular total general usando reduce
+        function calcularTotalGeneral() {
+            const total = carrito.reduce((sum, item) => sum + (item.cantidad * item.costo), 0);
+            document.getElementById('lblTotalGeneral').innerText = `Bs. ${total.toFixed(2)}`;
+        }
+
+        function renderizarCarrito() {
+            const lista = document.getElementById('listaResumen');
+            const msjVacio = document.getElementById('mensajeVacio');
+            
+            lista.innerHTML = '';
+            
+            if (carrito.length === 0) {
+                msjVacio.style.display = 'flex';
+                calcularTotalGeneral();
+                return;
+            } else {
+                msjVacio.style.display = 'none';
+            }
+
+            carrito.forEach(item => {
+                const subtotal = item.cantidad * item.costo;
+                const html = `
+                    <div class="group relative border-b border-zinc-100 py-3.5 last:border-0">
+                        <!-- Quitar Item -->
+                        <button type="button" onclick="removerInsumo(${item.id})" class="absolute top-3.5 right-0 text-zinc-400 transition-colors hover:text-red-500" title="Quitar">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                        
+                        <!-- Inputs ocultos para binding -->
+                        <input type="hidden" name="InsumoSeleccionadoId" value="${item.id}" />
+                        
+                        <div class="pr-6">
+                            <h4 class="mb-1 text-sm leading-tight font-semibold text-zinc-800">${item.nombre}</h4>
+                            <p class="mb-2 text-xs text-zinc-400">Unidad: ${item.unidad}</p>
+                            
+                            <div class="flex items-center justify-between gap-2">
+                                <!-- Cantidad -->
+                                <div class="flex w-24 flex-col gap-1">
+                                    <label class="font-semibold text-[10px] text-zinc-400 uppercase">Cant.</label>
+                                    <div class="flex h-8 items-center overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50">
+                                        <input type="number" name="InsumoSeleccionadoCantidad" value="${item.cantidad}" min="0.01" step="0.01" onchange="actualizarValor(${item.id}, 'cantidad', this.value)" onkeyup="actualizarValor(${item.id}, 'cantidad', this.value)" class="hide-arrows h-full w-full bg-transparent text-center text-xs font-medium text-zinc-700 focus:outline-none" />
+                                    </div>
+                                </div>
+                                
+                                <span class="pt-4 text-xs text-zinc-400">×</span>
+                                
+                                <!-- Costo Unitario -->
+                                <div class="flex w-24 flex-col gap-1">
+                                    <label class="font-semibold text-[10px] text-zinc-400 uppercase">Costo U.</label>
+                                    <div class="relative flex h-8 items-center overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50">
+                                        <span class="absolute left-2 text-[10px] text-zinc-400">Bs.</span>
+                                        <input type="number" name="InsumoSeleccionadoCosto" value="${item.costo.toFixed(2)}" min="0.00" step="0.01" onchange="actualizarValor(${item.id}, 'costo', this.value)" onkeyup="actualizarValor(${item.id}, 'costo', this.value)" class="hide-arrows h-full w-full bg-transparent pr-2 pl-6 text-right text-xs font-medium text-zinc-700 focus:outline-none" />
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Subtotal Fila -->
+                            <div class="mt-2 text-right">
+                                <span class="text-xs font-bold text-zinc-800" id="subtotal_${item.id}">Bs. ${subtotal.toFixed(2)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                lista.insertAdjacentHTML('beforeend', html);
+            });
+
+            calcularTotalGeneral();
+        }
+
+        // Validación submit
+        document.getElementById('formCompra').addEventListener('submit', function(e) {
+            if (carrito.length === 0) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Carrito vacío',
+                    text: 'Debe agregar al menos un insumo al carrito para poder registrar la compra.',
+                    icon: 'warning',
+                    confirmButtonColor: '#fa2020',
+                    confirmButtonText: 'Entendido'
+                });
+            }
+        });
+    </script>
+    <style>
+        .hide-arrows::-webkit-outer-spin-button,
+        .hide-arrows::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .hide-arrows {
+            -moz-appearance: textfield;
+        }
+    </style>
+}

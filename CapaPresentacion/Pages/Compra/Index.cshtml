@@ -1,0 +1,104 @@
+@page
+@model CapaPresentacion.Pages.Compra.IndexModel
+
+<section class="space-y-5">
+    <!-- Header -->
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+            <h1 class="text-xl font-semibold tracking-tight text-zinc-800">
+                Órdenes de Compra
+            </h1>
+            <p class="mt-1 text-sm text-zinc-500">
+                Administración y registro de compras de insumos del negocio
+            </p>
+        </div>
+        <a href="/Compra/Create" class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Nueva Compra
+        </a>
+    </div>
+
+    <!-- Contenedor Principal -->
+    <div class="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+        <!-- Buscador -->
+        <div class="flex flex-col gap-3 border-b border-zinc-100 px-5 py-4 md:flex-row md:items-center md:justify-between">
+            <div class="relative w-full md:max-w-xs">
+                <svg class="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35m1.85-5.15a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" />
+                </svg>
+                <input id="search" type="text" placeholder="Buscar compra..."
+                       class="w-full rounded-xl border border-zinc-200 bg-zinc-50 py-2 pr-4 pl-10 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10" />
+            </div>
+        </div>
+
+        <!-- Tabla -->
+        <div class="overflow-x-auto">
+            <table id="table" class="w-full text-sm">
+                <thead class="bg-zinc-50">
+                    <tr class="border-b border-zinc-200 text-left text-xs font-semibold tracking-wider text-zinc-500 uppercase">
+                        <th class="px-5 py-3">#</th>
+                        <th class="px-5 py-3">Fecha</th>
+                        <th class="px-5 py-3">Proveedor</th>
+                        <th class="px-5 py-3">Usuario</th>
+                        <th class="px-5 py-3">Total</th>
+                        <th class="px-5 py-3">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-100">
+                    @foreach (var item in Model.Compras)
+                    {
+                    <tr class="transition hover:bg-zinc-50">
+                        <td class="px-5 py-3 font-medium text-zinc-500">@item.Id</td>
+                        <td class="px-5 py-3 text-zinc-600">@item.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td class="px-5 py-3">
+                            <div class="flex items-center gap-2">
+                                <div class="flex h-7 w-7 items-center justify-center rounded-full bg-red-50 font-bold text-[11px] text-red-600">
+                                    @(item.NombreProveedor?.Length > 0 ? item.NombreProveedor.Substring(0, 1).ToUpper() : "?")
+                                </div>
+                                <span class="font-medium text-zinc-900">@item.NombreProveedor</span>
+                            </div>
+                        </td>
+                        <td class="px-5 py-3 text-zinc-600">@item.NombreUsuario</td>
+                        <td class="px-5 py-3 font-semibold text-zinc-900">
+                            Bs. @item.Total.ToString("N2")
+                        </td>
+                        <td class="px-5 py-3">
+                            <div class="flex justify-start gap-2">
+                                <!-- Botón Ver Detalles -->
+                                <a asp-page="./Detalle"
+                                   asp-route-id="@item.Id"
+                                   class="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 text-zinc-500 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
+                                   aria-label="Ver Detalles">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                </a>
+                                <!-- Botón Anular (Soft Delete) -->
+                                <button type="button"
+                                        onclick="confirmarEliminacion(@item.Id, '¿Está seguro de anular esta compra?')"
+                                        class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-zinc-200 text-zinc-500 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600"
+                                        aria-label="Anular Compra">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                                <!-- Formulario oculto para anular -->
+                                <form id="form-delete-@item.Id" method="post" asp-page-handler="Anular" asp-route-id="@item.Id" style="display:none;"></form>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Paginación -->
+        <div class="flex flex-col items-center justify-between gap-3 border-t border-zinc-100 px-5 py-4 md:flex-row" id="pagination-container">
+            <div class="text-sm text-zinc-500" id="info"></div>
+            <div class="flex items-center gap-2" id="pagination-buttons"></div>
+        </div>
+    </div>
+</section>
