@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -10,5 +10,10 @@
     <ProjectReference Include="..\CapaNegocio\CapaNegocio.csproj" />
     <ProjectReference Include="..\Entidades\Entidades.csproj" />
   </ItemGroup>
+
+  <Target Name="AutoSignDlls" AfterTargets="Build">
+    <Message Text="Firmando DLLs compiladas con certificado de desarrollo local..." Importance="high" />
+    <Exec Command="powershell -Command &quot;Get-ChildItem -Path '$(TargetDir)' -Filter 'Capa*.dll' -Recurse | ForEach-Object { $cert = Get-ChildItem Cert:\CurrentUser\My | Where-Object { $_.Subject -like '*CN=ElFogonLocalDev*' } | Select-Object -First 1; if ($cert) { Set-AuthenticodeSignature -FilePath $_.FullName -Certificate $cert } }; Get-ChildItem -Path '$(TargetDir)' -Filter 'Entidades.dll' -Recurse | ForEach-Object { $cert = Get-ChildItem Cert:\CurrentUser\My | Where-Object { $_.Subject -like '*CN=ElFogonLocalDev*' } | Select-Object -First 1; if ($cert) { Set-AuthenticodeSignature -FilePath $_.FullName -Certificate $cert } }&quot;" />
+  </Target>
 
 </Project>

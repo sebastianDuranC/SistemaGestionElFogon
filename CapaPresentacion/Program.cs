@@ -30,7 +30,7 @@ app.UseRouting();
 //primero Authentication, luego Authorization, luego el middleware de permisos
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseMiddleware<VerificadorPermisosMiddleware>();
+//app.UseMiddleware<VerificadorPermisosMiddleware>();
 
 app.MapRazorPages();
 app.Run();

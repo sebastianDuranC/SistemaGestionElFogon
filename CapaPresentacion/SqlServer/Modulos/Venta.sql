@@ -273,3 +273,189 @@ AS BEGIN
     WHERE pi.ProductoId = @ProductoId AND pi.Estado = 1 AND i.Estado = 1;
 END
 GO
+
+-- ==========================================
+-- TIPOS DE TABLAS PARA VENTA
+-- ==========================================
+IF NOT EXISTS (SELECT 1 FROM sys.types WHERE name = 'DetalleVentaTipo' AND is_user_defined = 1)
+BEGIN
+    CREATE TYPE DetalleVentaTipo AS TABLE (
+        ProductoId INT,
+        Cantidad INT,
+        PrecioUnitario DECIMAL(10,2),
+        SubTotal DECIMAL(10,2)
+    );
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.types WHERE name = 'DetallePagoTipo' AND is_user_defined = 1)
+BEGIN
+    CREATE TYPE DetallePagoTipo AS TABLE (
+        MetodoPagoId INT,
+        Monto DECIMAL(10,2)
+    );
+END
+GO
+
+-- ==========================================
+-- VENTAS
+-- ==========================================
+CREATE OR ALTER PROCEDURE sp_ListarVentas
+AS
+BEGIN
+    SELECT v.Id, v.Fecha, v.Total, v.EnLocal, CASE WHEN v.EnLocal = 1 THEN 'En Local' ELSE 'Para Llevar' END AS TipoVenta,
+           v.PlatoPrestado, v.MontoRecibido, v.CambioDevuelto, v.Estado, 
+           v.ClienteId, (c.Nombre + ' ' + ISNULL(c.Apellido, '')) AS Cliente,
+           v.UsuarioId, u.Nombre AS Vendedor
+    FROM Venta v
+    LEFT JOIN Cliente c ON v.ClienteId = c.Id
+    INNER JOIN Usuario u ON v.UsuarioId = u.Id
+    WHERE v.Estado = 1
+    ORDER BY v.Fecha DESC;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE sp_ObtenerVentaPorId
+    @Id INT
+AS
+BEGIN
+    SELECT v.Id, v.Fecha, v.Total, v.EnLocal, CASE WHEN v.EnLocal = 1 THEN 'En Local' ELSE 'Para Llevar' END AS TipoVenta,
+           v.PlatoPrestado, v.MontoRecibido, v.CambioDevuelto, v.Estado, 
+           v.ClienteId, (c.Nombre + ' ' + ISNULL(c.Apellido, '')) AS Cliente,
+           v.UsuarioId, u.Nombre AS Vendedor
+    FROM Venta v
+    LEFT JOIN Cliente c ON v.ClienteId = c.Id
+    INNER JOIN Usuario u ON v.UsuarioId = u.Id
+    WHERE v.Id = @Id;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE sp_ObtenerDetallesVenta
+    @VentaId INT
+AS
+BEGIN
+    SELECT dv.Id, dv.VentaId, dv.ProductoId, p.Nombre AS ProductoNombre, 
+           dv.PrecioUnitario, dv.Cantidad, dv.SubTotal, dv.Estado
+    FROM DetalleVenta dv
+    INNER JOIN Producto p ON dv.ProductoId = p.Id
+    WHERE dv.VentaId = @VentaId AND dv.Estado = 1;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE sp_ObtenerDetallesPago
+    @VentaId INT
+AS
+BEGIN
+    SELECT dp.Id, dp.VentaId, dp.MetodoPagoId, mp.Nombre AS MetodoPagoNombre, 
+           dp.Monto, dp.Estado
+    FROM DetallePago dp
+    INNER JOIN MetodoPago mp ON dp.MetodoPagoId = mp.Id
+    WHERE dp.VentaId = @VentaId AND dp.Estado = 1;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE sp_DevolverPlatos
+    @Id INT
+AS
+BEGIN
+    UPDATE Venta
+    SET PlatoPrestado = 0
+    WHERE Id = @Id;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE sp_CrearVenta
+    @ClienteId INT = NULL,
+    @UsuarioId INT,
+    @Total DECIMAL(10,2),
+    @EnLocal BIT,
+    @PlatoPrestado BIT = NULL,
+    @MontoRecibido DECIMAL(10,2),
+    @CambioDevuelto DECIMAL(10,2),
+    @Detalles DetalleVentaTipo READONLY,
+    @Pagos DetallePagoTipo READONLY
+AS
+BEGIN
+    SET NOCOUNT OFF;
+    BEGIN TRANSACTION;
+    BEGIN TRY
+        -- 1. Registrar Venta cabecera
+        INSERT INTO Venta (Fecha, Total, EnLocal, PlatoPrestado, MontoRecibido, CambioDevuelto, Estado, ClienteId, UsuarioId)
+        VALUES (GETDATE(), @Total, @EnLocal, @PlatoPrestado, @MontoRecibido, @CambioDevuelto, 1, @ClienteId, @UsuarioId);
+
+        DECLARE @VentaId INT = SCOPE_IDENTITY();
+
+        -- 2. Registrar Detalle de Venta
+        INSERT INTO DetalleVenta (Cantidad, PrecioUnitario, SubTotal, Estado, VentaId, ProductoId)
+        SELECT Cantidad, PrecioUnitario, SubTotal, 1, @VentaId, ProductoId
+        FROM @Detalles;
+
+        -- 3. Registrar Detalle de Pago
+        INSERT INTO DetallePago (Monto, Estado, VentaId, MetodoPagoId)
+        SELECT Monto, 1, @VentaId, MetodoPagoId
+        FROM @Pagos;
+
+        -- 4. Descontar stock de insumos relacionados al producto vendido (según la receta en ProductoInsumo)
+        UPDATE i
+        SET i.Stock = i.Stock - (dv.Cantidad * pi.Cantidad)
+        FROM Insumo i
+        INNER JOIN ProductoInsumo pi ON i.Id = pi.InsumoId
+        INNER JOIN @Detalles dv ON pi.ProductoId = dv.ProductoId
+        WHERE pi.Estado = 1;
+
+        -- 5. Registrar el movimiento en la bitácora de inventario como Salida
+        INSERT INTO MovimientoInventario (Fecha, TipoMovimiento, Cantidad, Observacion, UsuarioId, Estado, InsumoId)
+        SELECT GETDATE(), 'Salida', dv.Cantidad * pi.Cantidad, 'Salida por Venta #' + CAST(@VentaId AS NVARCHAR), @UsuarioId, 1, pi.InsumoId
+        FROM @Detalles dv
+        INNER JOIN ProductoInsumo pi ON dv.ProductoId = pi.ProductoId
+        WHERE pi.Estado = 1;
+
+        COMMIT TRANSACTION;
+        SELECT @VentaId;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE sp_AnularVenta
+    @Id INT,
+    @UsuarioId INT
+AS
+BEGIN
+    SET NOCOUNT OFF;
+    BEGIN TRANSACTION;
+    BEGIN TRY
+        IF EXISTS (SELECT 1 FROM Venta WHERE Id = @Id AND Estado = 1)
+        BEGIN
+            -- 1. Anular registros cambiándole el estado
+            UPDATE Venta SET Estado = 0 WHERE Id = @Id;
+            UPDATE DetalleVenta SET Estado = 0 WHERE VentaId = @Id;
+            UPDATE DetallePago SET Estado = 0 WHERE VentaId = @Id;
+
+            -- 2. Devolver el stock a los insumos correspondientes
+            UPDATE i
+            SET i.Stock = i.Stock + (dv.Cantidad * pi.Cantidad)
+            FROM Insumo i
+            INNER JOIN ProductoInsumo pi ON i.Id = pi.InsumoId
+            INNER JOIN DetalleVenta dv ON pi.ProductoId = dv.ProductoId
+            WHERE dv.VentaId = @Id AND pi.Estado = 1;
+
+            -- 3. Registrar el movimiento de entrada por anulación
+            INSERT INTO MovimientoInventario (Fecha, TipoMovimiento, Cantidad, Observacion, UsuarioId, Estado, InsumoId)
+            SELECT GETDATE(), 'Entrada', dv.Cantidad * pi.Cantidad, 'Anulación de la venta #' + CAST(@Id AS NVARCHAR), @UsuarioId, 1, pi.InsumoId
+            FROM DetalleVenta dv
+            INNER JOIN ProductoInsumo pi ON dv.ProductoId = pi.ProductoId
+            WHERE dv.VentaId = @Id AND pi.Estado = 1;
+        END
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH;
+END;
+GO

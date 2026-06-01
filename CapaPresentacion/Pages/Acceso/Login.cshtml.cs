@@ -11,8 +11,8 @@ namespace CapaPresentacion.Pages.Acceso
     [AllowAnonymous]
     public class LoginModel : PageModel
     {
-        private readonly UsuarioBLL _usuarioBll = new UsuarioBLL();
-        private readonly PermisoBLL _permisoBll = new PermisoBLL();
+        UsuarioBLL usuarioBll = new UsuarioBLL();
+        PermisoBLL permisoBll = new PermisoBLL();
 
         [BindProperty] public string Nombre { get; set; } = "";
         [BindProperty] public string Contra { get; set; } = "";
@@ -25,7 +25,7 @@ namespace CapaPresentacion.Pages.Acceso
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var Usuario = _usuarioBll.ValidarCredenciales(Nombre, Contra);
+            var Usuario = usuarioBll.ValidarCredenciales(Nombre, Contra);
 
             if (Usuario == null)
             {
@@ -34,7 +34,7 @@ namespace CapaPresentacion.Pages.Acceso
             }
 
             //Obtener las rutas que el rol del usuario puede acceder
-            var RutasPermitidas = _permisoBll.ObtenerRutasPermitidas(Usuario.RolId);
+            var RutasPermitidas = permisoBll.ObtenerRutasPermitidas(Usuario.RolId);
 
             //Construir Claims (datos que se guardan en la cookie)
             var Claims = new List<Claim>

@@ -1,0 +1,429 @@
+﻿@page
+@model CapaPresentacion.Pages.Venta.CreateModel
+
+<section class="space-y-5">
+    <!-- Header -->
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+            <h1 class="text-xl font-semibold tracking-tight text-zinc-800">
+                Nueva Venta
+            </h1>
+            <p class="mt-1 text-sm text-zinc-500">
+                Registrar un nuevo pedido y procesar su pago
+            </p>
+        </div>
+        <a href="/Venta/Index" class="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-800">
+            Volver
+        </a>
+    </div>
+
+    <!-- Layout de Dos Columnas -->
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <!-- Columna Izquierda: Catálogo (2/3 de ancho) -->
+        <div class="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm lg:col-span-2">
+            <div class="flex flex-col items-start justify-between gap-3 border-b border-zinc-100 pb-4 sm:flex-row sm:items-center">
+                <div>
+                    <h2 class="font-semibold text-[15px] text-zinc-800">Platos / Productos</h2>
+                </div>
+                <!-- Buscador de Productos -->
+                <div class="relative w-full sm:max-w-xs">
+                    <svg class="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35m1.85-5.15a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" />
+                    </svg>
+                    <input id="buscadorProductos" type="text" placeholder="Buscar productos..."
+                           class="w-full rounded-xl border border-zinc-200 bg-zinc-50 py-2 pr-4 pl-10 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10" />
+                </div>
+            </div>
+
+            <!-- Contenedor del Catálogo de Productos -->
+            <div class="overflow-y-auto pr-1" style="max-height: calc(100vh - 300px);">
+                <div class="grid grid-cols-2 gap-4 md:grid-cols-3" id="contenedorProductos">
+                    <!-- Mensaje de Búsqueda sin Resultados -->
+                    <div id="sinResultados" class="col-span-full flex hidden flex-col items-center justify-center rounded-2xl border border-zinc-100 bg-zinc-50 px-4 py-16 text-center">
+                        <svg class="mx-auto mb-2 h-10 w-10 text-zinc-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <h3 class="text-sm font-semibold text-zinc-600">No se encontraron productos</h3>
+                        <p class="mt-1 text-xs text-zinc-400">Intente buscar otro nombre</p>
+                    </div>
+
+                    <!-- Tarjetas de Productos -->
+                    @foreach (var prod in Model.ListaProductos)
+                    {
+                        <div class="producto-card flex flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition duration-200 hover:shadow-md" 
+                             data-nombre="@prod.Nombre.ToLower()">
+                            <div class="relative flex h-32 items-center justify-center overflow-hidden border-b border-zinc-100 bg-zinc-50">
+                                @if (!string.IsNullOrEmpty(prod.FotoUrl))
+                                {
+                                    <img src="@prod.FotoUrl" alt="@prod.Nombre" class="h-full w-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                                    <div class="hidden h-full w-full items-center justify-center bg-zinc-50 text-zinc-400">
+                                        <svg class="h-8 w-8 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="flex h-full w-full items-center justify-center bg-zinc-50 text-zinc-400">
+                                        <svg class="h-8 w-8 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                    </div>
+                                }
+                            </div>
+                            <div class="flex flex-1 flex-col justify-between gap-3 p-4">
+                                <div>
+                                    <h3 class="line-clamp-2 leading-tight font-semibold text-zinc-800 text-[14px]" title="@prod.Nombre">@prod.Nombre</h3>
+                                    <span class="mt-1 inline-block font-medium text-[11px] text-zinc-400">Categoría: @prod.NombreCategoria</span>
+                                </div>
+                                <div class="mt-auto flex items-center justify-between gap-2">
+                                    <span class="font-bold text-[13px] text-zinc-800">Bs. @prod.Precio.ToString("N2")</span>
+                                    <button type="button" 
+                                            onclick="agregarProducto(@prod.Id, '@prod.Nombre', @prod.Precio.ToString(System.Globalization.CultureInfo.InvariantCulture))" 
+                                            class="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-900 text-white transition hover:bg-zinc-800" 
+                                            title="Agregar al Carrito">
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna Derecha: Resumen de Pedido (1/3 de ancho) -->
+        <div class="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
+            <div>
+                <h2 class="font-semibold text-[15px] text-zinc-800">Resumen de Pedido</h2>
+            </div>
+
+            <form method="post" id="formVenta" class="flex flex-1 flex-col gap-4">
+                <!-- Tipo de Pedido (En Local / Para Llevar) -->
+                <div class="space-y-1.5">
+                    <label class="block font-bold tracking-wider text-[10px] text-zinc-400 uppercase">TIPO DE PEDIDO</label>
+                    <div class="flex items-center gap-4">
+                        <label class="inline-flex cursor-pointer items-center">
+                            <input type="radio" asp-for="EnLocal" value="false" id="radioLlevar" checked class="h-4 w-4 border-zinc-300 text-red-600 focus:ring-red-500" />
+                            <span class="ml-2 text-xs font-semibold text-zinc-700">Llevar</span>
+                        </label>
+                        <label class="inline-flex cursor-pointer items-center">
+                            <input type="radio" asp-for="EnLocal" value="true" id="radioLocal" class="h-4 w-4 border-zinc-300 text-red-600 focus:ring-red-500" />
+                            <span class="ml-2 text-xs font-semibold text-zinc-700">Mesa</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Dropdown Cliente y Detalles -->
+                <div class="space-y-2">
+                    <label for="ClienteId" class="block font-bold tracking-wider text-[10px] text-zinc-400 uppercase">CLIENTE</label>
+                    <select asp-for="ClienteId" id="selectCliente" class="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10">
+                        <option value="" data-comerciante="false">-- Seleccione un cliente --</option>
+                        @foreach (var c in Model.ListaClientes)
+                        {
+                            <option value="@c.Id" data-comerciante="@c.EsComerciante.ToString().ToLower()" data-local="@c.NumeroLocal" data-pasillo="@c.Pasillo">
+                                @c.Nombre @c.Apellido @(c.EsComerciante ? "(Comerciante)" : "")
+                            </option>
+                        }
+                    </select>
+
+                    <!-- Datos del Comerciante (Nro Local / Pasillo) -->
+                    <div id="metaComerciante" class="border-zinc-150 mt-2 grid hidden grid-cols-2 gap-2 rounded-xl border bg-zinc-50 p-2.5">
+                        <div>
+                            <span class="block leading-none font-bold text-[9px] text-zinc-400 uppercase">LOCAL</span>
+                            <span id="lblLocal" class="text-xs leading-normal font-bold text-zinc-700">-</span>
+                        </div>
+                        <div>
+                            <span class="block leading-none font-bold text-[9px] text-zinc-400 uppercase">PASILLO</span>
+                            <span id="lblPasillo" class="text-xs leading-normal font-bold text-zinc-700">-</span>
+                        </div>
+                    </div>
+
+                    <!-- Recordatorio de Platos Prestados (Solo comerciante + llevar) -->
+                    <div id="containerPlatos" class="mt-3 flex hidden items-center gap-2 border-t border-zinc-100 pt-3">
+                        <input type="checkbox" asp-for="PlatoPrestado" id="chkPlatoPrestado" class="h-4 w-4 cursor-pointer rounded border-zinc-300 text-red-600 focus:ring-red-500" />
+                        <label for="chkPlatoPrestado" class="cursor-pointer text-xs font-semibold text-zinc-700">¿Prestar platos de cerámica?</label>
+                    </div>
+                </div>
+
+                <!-- Lista del Carrito -->
+                <div class="flex-1 overflow-y-auto border-t border-b border-zinc-100 py-3" style="min-height: 180px; max-height: calc(100vh - 460px);">
+                    <div id="mensajeVacio" class="flex flex-col items-center justify-center gap-2 py-10 text-center text-xs text-zinc-400">
+                        <svg class="h-8 w-8 text-zinc-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                        </svg>
+                        <span>El pedido está vacío. Agregue productos de la izquierda.</span>
+                    </div>
+                    <div id="listaResumen"></div>
+                </div>
+
+                <!-- Métodos de Pago combinables -->
+                <div class="mt-1 space-y-2 py-1">
+                    <label class="block font-bold tracking-wider text-[10px] text-zinc-400 uppercase">MÉTODOS DE PAGO</label>
+                    <div class="space-y-2">
+                        @foreach (var mp in Model.ListaMetodosPago)
+                        {
+                            <div class="flex items-center justify-between gap-3 rounded-xl border border-zinc-200 bg-zinc-50 p-2 transition duration-150 hover:bg-zinc-100">
+                                <span class="pl-1 text-xs font-semibold text-zinc-700">@mp.Nombre</span>
+                                <div class="relative flex w-32 items-center overflow-hidden rounded-xl border border-zinc-200 bg-white">
+                                    <span class="absolute left-2 text-[10px] text-zinc-400">Bs.</span>
+                                    <input type="number" name="PagoMonto" data-metodo-id="@mp.Id" value="0.00" min="0.00" step="0.01" oninput="actualizarTotalesPagos()" class="hide-arrows input-pago-monto h-8 w-full bg-transparent pr-2 pl-7 text-right text-xs font-semibold text-zinc-700 focus:outline-none" />
+                                    <input type="hidden" name="PagoMetodoId" value="@mp.Id" />
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Totales y Enviar -->
+                <div class="space-y-3 rounded-xl border border-zinc-100 bg-zinc-50 p-4">
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="font-medium text-zinc-500">Subtotal:</span>
+                        <span class="font-semibold text-zinc-700" id="lblSubtotal">Bs. 0.00</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="font-bold text-zinc-600">Total a Pagar:</span>
+                        <span class="text-base font-bold text-zinc-900" id="lblTotalGeneral">Bs. 0.00</span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="font-medium text-zinc-500">Pagado:</span>
+                        <span class="font-semibold text-zinc-700" id="lblTotalPagado">Bs. 0.00</span>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-zinc-200 pt-2 text-sm">
+                        <span class="font-bold text-zinc-600">Cambio:</span>
+                        <span class="text-base font-bold text-emerald-600" id="lblCambio">Bs. 0.00</span>
+                    </div>
+                    <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 font-semibold text-white shadow-sm transition duration-200 hover:bg-red-700 hover:shadow">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
+                        Completar Venta
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        const carrito = [];
+        const selectCliente = document.getElementById('selectCliente');
+        const metaComerciante = document.getElementById('metaComerciante');
+        const containerPlatos = document.getElementById('containerPlatos');
+        const chkPlatoPrestado = document.getElementById('chkPlatoPrestado');
+        const radioLlevar = document.getElementById('radioLlevar');
+        const radioLocal = document.getElementById('radioLocal');
+        const inputBuscarProducto = document.getElementById('buscadorProductos');
+
+        // Lógica de visualización comerciante y préstamo de platos
+        function evaluarLogicaClientePedido() {
+            const selectedOption = selectCliente.options[selectCliente.selectedIndex];
+            const esComerciante = selectedOption.getAttribute('data-comerciante') === 'true';
+            const esLlevar = radioLlevar.checked;
+
+            // Mostrar/Ocultar metadatos comerciante
+            if (esComerciante) {
+                metaComerciante.classList.remove('hidden');
+                document.getElementById('lblLocal').innerText = selectedOption.getAttribute('data-local') || '-';
+                document.getElementById('lblPasillo').innerText = selectedOption.getAttribute('data-pasillo') || '-';
+            } else {
+                metaComerciante.classList.add('hidden');
+            }
+
+            // Mostrar/Ocultar check de platos prestados
+            if (esComerciante && esLlevar) {
+                containerPlatos.classList.remove('hidden');
+            } else {
+                containerPlatos.classList.add('hidden');
+                chkPlatoPrestado.checked = false; // desmarcar
+            }
+        }
+
+        selectCliente.addEventListener('change', evaluarLogicaClientePedido);
+        radioLlevar.addEventListener('change', evaluarLogicaClientePedido);
+        radioLocal.addEventListener('change', evaluarLogicaClientePedido);
+
+        // Buscador de productos
+        inputBuscarProducto.addEventListener('input', function() {
+            const query = this.value.toLowerCase().trim();
+            const tarjetas = document.querySelectorAll('.producto-card');
+            const sinResultados = document.getElementById('sinResultados');
+            let visibles = 0;
+
+            tarjetas.forEach(card => {
+                const nombre = card.dataset.nombre;
+                if (nombre.includes(query)) {
+                    card.style.display = 'flex';
+                    visibles++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            sinResultados.style.display = visibles === 0 ? 'flex' : 'none';
+        });
+
+        // Gestión del carrito
+        function agregarProducto(id, nombre, precio) {
+            const existente = carrito.find(p => p.id === id);
+            if (existente) {
+                existente.cantidad += 1;
+            } else {
+                carrito.push({ id, nombre, cantidad: 1, precio: parseFloat(precio) });
+            }
+            renderizarCarrito();
+        }
+
+        function removerProducto(id) {
+            const index = carrito.findIndex(p => p.id === id);
+            if (index !== -1) {
+                carrito.splice(index, 1);
+                renderizarCarrito();
+            }
+        }
+
+        function cambiarCantidad(id, delta) {
+            const item = carrito.find(p => p.id === id);
+            if (item) {
+                item.cantidad += delta;
+                if (item.cantidad <= 0) {
+                    removerProducto(id);
+                } else {
+                    renderizarCarrito();
+                }
+            }
+        }
+
+        function actualizarCantidadManual(id, valor) {
+            const item = carrito.find(p => p.id === id);
+            if (item) {
+                const cant = parseInt(valor) || 0;
+                if (cant <= 0) {
+                    removerProducto(id);
+                } else {
+                    item.cantidad = cant;
+                    renderizarCarrito();
+                }
+            }
+        }
+
+        function renderizarCarrito() {
+            const contenedor = document.getElementById('listaResumen');
+            const vacio = document.getElementById('mensajeVacio');
+            contenedor.innerHTML = '';
+
+            if (carrito.length === 0) {
+                vacio.style.display = 'flex';
+                actualizarTotalesPagos();
+                return;
+            }
+
+            vacio.style.display = 'none';
+
+            carrito.forEach(item => {
+                const subtotal = item.cantidad * item.precio;
+                contenedor.insertAdjacentHTML('beforeend', `
+                    <div class="flex items-center justify-between border-b border-zinc-100 py-3 last:border-0">
+                        <input type="hidden" name="ProductoSeleccionadoId" value="${item.id}" />
+                        <input type="hidden" name="ProductoSeleccionadoCantidad" value="${item.cantidad}" />
+                        <input type="hidden" name="ProductoSeleccionadoPrecio" value="${item.precio}" />
+
+                        <div class="flex-1 pr-3">
+                            <h4 class="text-xs leading-tight font-semibold text-zinc-800">${item.nombre}</h4>
+                            <span class="text-[10px] text-zinc-400">Bs. ${item.precio.toFixed(2)} × ${item.cantidad}</span>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <!-- Controles de Cantidad -->
+                            <div class="flex h-7 items-center overflow-hidden rounded-lg border border-zinc-200 bg-zinc-50">
+                                <button type="button" onclick="cambiarCantidad(${item.id}, -1)" class="px-2 text-xs font-semibold text-zinc-500 hover:bg-zinc-150 focus:outline-none">-</button>
+                                <input type="number" value="${item.cantidad}" min="1" onchange="actualizarCantidadManual(${item.id}, this.value)" class="hide-arrows w-8 bg-transparent text-center text-xs font-semibold text-zinc-700 focus:outline-none" />
+                                <button type="button" onclick="cambiarCantidad(${item.id}, 1)" class="px-2 text-xs font-semibold text-zinc-500 hover:bg-zinc-150 focus:outline-none">+</button>
+                            </div>
+
+                            <!-- Botón Eliminar -->
+                            <button type="button" onclick="removerProducto(${item.id})" class="p-1 text-zinc-400 transition-colors hover:text-red-500 focus:outline-none" title="Quitar">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                `);
+            });
+
+            actualizarTotalesPagos();
+        }
+
+        // Lógica de pagos y recálculo financiero
+        function actualizarTotalesPagos() {
+            // Calcular total general del pedido
+            const totalGeneral = carrito.reduce((sum, p) => sum + (p.cantidad * p.precio), 0);
+            
+            document.getElementById('lblSubtotal').innerText = `Bs. ${totalGeneral.toFixed(2)}`;
+            document.getElementById('lblTotalGeneral').innerText = `Bs. ${totalGeneral.toFixed(2)}`;
+
+            // Sumar montos pagados
+            let totalPagado = 0;
+            const inputsPago = document.querySelectorAll('.input-pago-monto');
+            inputsPago.forEach(input => {
+                totalPagado += parseFloat(input.value) || 0;
+            });
+
+            document.getElementById('lblTotalPagado').innerText = `Bs. ${totalPagado.toFixed(2)}`;
+
+            // Calcular cambio devuelto
+            let cambio = 0;
+            if (totalPagado > totalGeneral) {
+                cambio = totalPagado - totalGeneral;
+            }
+
+            document.getElementById('lblCambio').innerText = `Bs. ${cambio.toFixed(2)}`;
+        }
+
+        // Validación antes de enviar el formulario
+        document.getElementById('formVenta').addEventListener('submit', function (e) {
+            if (carrito.length === 0) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Pedido vacío',
+                    text: 'Debe agregar al menos un producto al pedido antes de completar la venta.',
+                    icon: 'warning',
+                    confirmButtonColor: '#fa2020',
+                    confirmButtonText: 'Entendido'
+                });
+                return;
+            }
+
+            const totalGeneral = carrito.reduce((sum, p) => sum + (p.cantidad * p.precio), 0);
+            let totalPagado = 0;
+            document.querySelectorAll('.input-pago-monto').forEach(input => {
+                totalPagado += parseFloat(input.value) || 0;
+            });
+
+            if (totalPagado < totalGeneral) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Pago insuficiente',
+                    text: `El monto pagado (Bs. ${totalPagado.toFixed(2)}) es menor al total a pagar (Bs. ${totalGeneral.toFixed(2)})`,
+                    icon: 'warning',
+                    confirmButtonColor: '#fa2020',
+                    confirmButtonText: 'Corregir Pago'
+                });
+            }
+        });
+    </script>
+    <style>
+        .hide-arrows::-webkit-outer-spin-button,
+        .hide-arrows::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .hide-arrows {
+            -moz-appearance: textfield;
+        }
+    </style>
+}

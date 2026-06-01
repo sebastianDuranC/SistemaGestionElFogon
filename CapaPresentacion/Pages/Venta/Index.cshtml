@@ -1,0 +1,192 @@
+﻿@page
+@model CapaPresentacion.Pages.Venta.IndexModel
+
+<section class="space-y-5">
+    <!-- Header -->
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+            <h1 class="text-xl font-semibold tracking-tight text-zinc-800">
+                Órdenes de Venta
+            </h1>
+            <p class="mt-1 text-sm text-zinc-500">
+                Administración y registro de ventas del negocio
+            </p>
+        </div>
+        <a href="/Venta/Create" class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Registrar Venta
+        </a>
+    </div>
+
+    <!-- Contenedor Principal -->
+    <div class="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+        <!-- Buscador -->
+        <div class="flex flex-col gap-3 border-b border-zinc-100 px-5 py-4 md:flex-row md:items-center md:justify-between">
+            <div class="relative w-full md:max-w-xs">
+                <svg class="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35m1.85-5.15a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" />
+                </svg>
+                <input id="search" type="text" placeholder="Buscar venta..."
+                       class="w-full rounded-xl border border-zinc-200 bg-zinc-50 py-2 pr-4 pl-10 text-sm text-zinc-700 transition outline-none focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10" />
+            </div>
+        </div>
+
+        <!-- Tabla -->
+        <div class="overflow-x-auto">
+            <table id="table" class="w-full text-sm">
+                <thead class="bg-zinc-50">
+                    <tr class="border-b border-zinc-200 text-left text-xs font-semibold tracking-wider text-zinc-500 uppercase">
+                        <th class="px-5 py-3">#</th>
+                        <th class="px-5 py-3">Fecha</th>
+                        <th class="px-5 py-3">Cliente</th>
+                        <th class="px-5 py-3">Tipo Venta</th>
+                        <th class="px-5 py-3">¿Se prestó platos?</th>
+                        <th class="px-5 py-3">Vendedor</th>
+                        <th class="px-5 py-3">Total</th>
+                        <th class="px-5 py-3">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-100">
+                    @foreach (var item in Model.Ventas)
+                    {
+                    <tr class="transition hover:bg-zinc-50">
+                        <td class="px-5 py-3 font-medium text-zinc-500">@item.Id</td>
+                        <td class="px-5 py-3 text-zinc-600">@item.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td class="px-5 py-3">
+                            <div class="flex items-center gap-2">
+                                <span class="font-medium text-zinc-900">@item.Cliente</span>
+                            </div>
+                        </td>
+                        <td class="px-5 py-3">
+                            @if (item.EnLocal)
+                            {
+                                <span class="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10 ring-inset">En local</span>
+                            }
+                            else
+                            {
+                                <span class="inline-flex items-center rounded-full bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-700 ring-1 ring-zinc-600/10 ring-inset">Para llever</span>
+                            }
+                        </td>
+                        <td class="px-5 py-3" id="plato-cell-@item.Id">
+                            @if (item.PlatoPrestado == true)
+                            {
+                                <div class="flex items-center gap-2">
+                                    <span class="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-700">
+                                        Pendiente
+                                    </span>
+                                    <button type="button"
+                                            onclick="devolverPlatos(@item.Id)"
+                                            class="inline-flex cursor-pointer items-center gap-1 rounded-lg bg-zinc-100 px-2.5 py-1 font-medium text-[11px] text-zinc-700 shadow-sm transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700 hover:ring-1 hover:ring-emerald-700/10"
+                                            title="Marcar platos como devueltos">
+                                        Devolver
+                                    </button>
+                                </div>
+                            }
+                            else if (item.PlatoPrestado == false && item.ClienteId != 1)
+                            {
+                                <span class="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-700">
+                                    Devueltos
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="font-medium text-zinc-400">No</span>
+                            }
+                        </td>
+                        <td class="px-5 py-3 text-zinc-600">@item.Vendedor</td>
+                        <td class="px-5 py-3 font-semibold text-zinc-900">
+                            Bs. @item.Total.ToString("N2")
+                        </td>
+                        <td class="px-5 py-3">
+                            <div class="flex justify-start gap-2">
+                                <!-- Botón Ver Detalles -->
+                                <a asp-page="./Detalle"
+                                   asp-route-id="@item.Id"
+                                   class="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 text-zinc-500 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
+                                   aria-label="Ver Detalles">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                </a>
+                                <!-- Botón Anular (Soft Delete) -->
+                                <button type="button"
+                                        onclick="confirmarEliminacion(@item.Id, 'La venta será anulada')"
+                                        class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-zinc-200 text-zinc-500 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600"
+                                        aria-label="Anular Venta">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                                <!-- Formulario oculto para anular -->
+                                <form id="form-delete-@item.Id" method="post" asp-page-handler="Anular" asp-route-id="@item.Id" style="display:none;"></form>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Paginación -->
+        <div class="flex flex-col items-center justify-between gap-3 border-t border-zinc-100 px-5 py-4 md:flex-row" id="pagination-container">
+            <div class="text-sm text-zinc-500" id="info"></div>
+            <div class="flex items-center gap-2" id="pagination-buttons"></div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        function devolverPlatos(ventaId) {
+            Swal.fire({
+                title: '¿Confirmar devolución?',
+                text: 'Tengo los platos prestados devueltos',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, devueltos',
+                cancelButtonText: 'Cancelar',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const token = $('input[name="__RequestVerificationToken"]').val();
+                    $.ajax({
+                        url: '?handler=DevolverPlatos',
+                        type: 'POST',
+                        data: {
+                            id: ventaId,
+                            __RequestVerificationToken: token
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: '¡Actualizado!',
+                                    text: response.message,
+                                    icon: 'success',
+                                    timer: 1500,
+                                    showConfirmButton: false
+                                });
+                                // Actualizar dinámicamente la celda en el DOM sin recargar la página entera
+                                const cell = document.getElementById(`plato-cell-${ventaId}`);
+                                if (cell) {
+                                    cell.innerHTML = `
+                                        <span class="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-700">
+                                            Devueltos
+                                        </span>
+                                    `;
+                                }
+                            } else {
+                                Swal.fire('Error', response.message, 'error');
+                            }
+                        },
+                        error: function () {
+                            Swal.fire('Error', 'Ocurrió un error inesperado al procesar la solicitud.', 'error');
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}

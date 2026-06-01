@@ -126,6 +126,7 @@ namespace Entidades
         public decimal Total { get; set; }
         public bool EnLocal { get; set; }
         public string TipoVenta { get; set; }    // "En Local" / "Para Llevar" — del SP
+        public bool? PlatoPrestado { get; set; } // Si se prestó platos de cerámica al comerciante
         public int? ClienteId { get; set; }
         public string Cliente { get; set; }
         public int UsuarioId { get; set; }
@@ -145,6 +146,15 @@ namespace Entidades
         public decimal PrecioUnitario { get; set; }
         public int Cantidad { get; set; }
         public decimal SubTotal { get; set; }
+        public bool Estado { get; set; }
+    }
+    public class DetallePago
+    {
+        public int Id { get; set; }
+        public int VentaId { get; set; }
+        public int MetodoPagoId { get; set; }
+        public string MetodoPagoNombre { get; set; }
+        public decimal Monto { get; set; }
         public bool Estado { get; set; }
     }
     public class Compra
@@ -174,6 +184,7 @@ namespace Entidades
         public int Id { get; set; }
         public int InsumoId { get; set; }
         public string NombreInsumo { get; set; }
+        public string NombreUnidadMedida { get; set; }
         public DateTime Fecha { get; set; }
         public string TipoMovimiento { get; set; } // "Entrada","Salida","Anulación"
         public decimal Cantidad { get; set; }
