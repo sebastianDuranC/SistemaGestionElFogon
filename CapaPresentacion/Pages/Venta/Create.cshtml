@@ -169,7 +169,7 @@
                                 <span class="pl-1 text-xs font-semibold text-zinc-700">@mp.Nombre</span>
                                 <div class="relative flex w-32 items-center overflow-hidden rounded-xl border border-zinc-200 bg-white">
                                     <span class="absolute left-2 text-[10px] text-zinc-400">Bs.</span>
-                                    <input type="number" name="PagoMonto" data-metodo-id="@mp.Id" value="0.00" min="0.00" step="0.01" oninput="actualizarTotalesPagos()" class="hide-arrows input-pago-monto h-8 w-full bg-transparent pr-2 pl-7 text-right text-xs font-semibold text-zinc-700 focus:outline-none" />
+                                    <input type="number" name="PagoMonto" data-metodo-id="@mp.Id" value="0.00" min="0.00" step="0.50" oninput="actualizarTotalesPagos()" class="hide-arrows input-pago-monto h-8 w-full bg-transparent pr-2 pl-7 text-right text-xs font-semibold text-zinc-700 focus:outline-none" />
                                     <input type="hidden" name="PagoMetodoId" value="@mp.Id" />
                                 </div>
                             </div>

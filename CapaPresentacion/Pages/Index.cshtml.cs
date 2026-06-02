@@ -1,16 +1,20 @@
-using Microsoft.AspNetCore.Mvc;
+using CapaNegocio;
+using Entidades;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CapaPresentacion.Pages;
-
-public class IndexModel : PageModel
+namespace CapaPresentacion.Pages
 {
-    // 1. Creas una propiedad pública
-    public string MensajeBienvenida { get; set; } = "";
-
-    public void OnGet()
+    public class IndexModel : PageModel
     {
-        // 2. Le asignas valor cuando la página carga
-        MensajeBienvenida = "¡Hola desde C#!";
+        private readonly DashboardBLL dashboardBLL = new DashboardBLL();
+
+        //resumen del panel expuesto a la vista
+        public DashboardResumen Resumen { get; set; } = new();
+
+        public void OnGet()
+        {
+            //cargar el resumen desde el bll
+            Resumen = dashboardBLL.ObtenerResumenDashboard();
+        }
     }
 }

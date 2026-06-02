@@ -1,9 +1,142 @@
 ﻿@page
 @model IndexModel
-@{
-    ViewData["Title"] = "Home page";
-}
 
-<div class="text-center">
-    <h1 class="display-4">@Model.MensajeBienvenida</h1>
+<div class="space-y-6">
+    <!--seccion 1-tarjetas metricas-->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <!--tarjeta de ventas de hoy-->
+        <div class="flex items-center justify-between rounded-lg border border-l-4 border-zinc-200 border-l-emerald-500 bg-white p-4 shadow-sm">
+            <div>
+                <p class="text-xs font-semibold text-zinc-500">Ventas de Hoy</p>
+                <h3 class="mt-1 text-xl font-bold text-zinc-900">Bs. @Model.Resumen.TotalVentasHoy.ToString("N2")</h3>
+            </div>
+        </div>
+
+        <!--tarjeta de ventas del mes-->
+        <div class="flex items-center justify-between rounded-lg border border-l-4 border-zinc-200 border-l-blue-500 bg-white p-4 shadow-sm">
+            <div>
+                <p class="text-xs font-semibold text-zinc-500">Ventas del Mes</p>
+                <h3 class="mt-1 text-xl font-bold text-zinc-900">Bs. @Model.Resumen.VentasMesBs.ToString("N2")</h3>
+            </div>
+        </div>
+
+        <!--tarjeta de insumos totales-->
+        <div class="flex items-center justify-between rounded-lg border border-l-4 border-zinc-200 border-l-zinc-400 bg-white p-4 shadow-sm">
+            <div>
+                <p class="text-xs font-semibold text-zinc-500">Insumos en inventario</p>
+                <h3 class="mt-1 text-xl font-bold text-zinc-900">@Model.Resumen.TotalInsumos</h3>
+            </div>
+        </div>
+
+        <!--tarjeta de insumos con bajo stock-->
+        <div class="flex items-center justify-between rounded-lg border border-l-4 border-zinc-200 @(Model.Resumen.InsumosStockBajoCount > 0 ? "border-l-red-500" : "border-l-zinc-300") bg-white p-4 shadow-sm">
+            <div>
+                <p class="text-xs font-semibold text-zinc-500">Insumos con stock bajo</p>
+                <h3 class="mt-1 text-xl font-bold @(Model.Resumen.InsumosStockBajoCount > 0 ? "text-red-600 animate-pulse" : "text-zinc-950")">
+                    @Model.Resumen.InsumosStockBajoCount
+                </h3>
+            </div>
+        </div>
+    </div>
+
+    <!--seccion 2- graficos-->
+    <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <!--grafico de productos mas vendidos-->
+        <div class="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm">
+            <h3 class="mb-3 border-b border-zinc-100 pb-2 text-sm font-bold text-zinc-700">Productos mas vendidos</h3>
+            <div class="relative h-72 w-full">
+                <canvas id="chartProductos"></canvas>
+            </div>
+        </div>
+
+        <!--grafico de metodos de pago-->
+        <div class="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm">
+            <h3 class="mb-3 border-b border-zinc-100 pb-2 text-sm font-bold text-zinc-700">Métodos de pago mas usados</h3>
+            <div class="relative h-72 w-full">
+                <canvas id="chartPagos"></canvas>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script src="/js/chart.umd.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            //grafico de productos mas vendidos
+            const ctxProductos = document.getElementById("chartProductos").getContext("2d");
+            const productosLabels = @Html.Raw(Json.Serialize(Model.Resumen.ProductosMasVendidos.Select(p => p.ProductoNombre)));
+            const productosData = @Html.Raw(Json.Serialize(Model.Resumen.ProductosMasVendidos.Select(p => p.Cantidad)));
+
+            new Chart(ctxProductos, {
+                type: "bar",
+                data: {
+                    labels: productosLabels,
+                    datasets: [{
+                        label: "Cantidad",
+                        data: productosData,
+                        backgroundColor: "rgba(239, 68, 68, 0.8)",
+                        borderColor: "rgb(239, 68, 68)",
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { precision: 0, color: "#71717a" }
+                        },
+                        x: {
+                            ticks: { color: "#71717a" }
+                        }
+                    }
+                }
+            });
+
+            //grafico de metodos de pago mas usados
+            const ctxPagos = document.getElementById("chartPagos").getContext("2d");
+            const pagosLabels = @Html.Raw(Json.Serialize(Model.Resumen.MetodosPagoMasUsados.Select(p => p.MetodoPagoNombre)));
+            const pagosData = @Html.Raw(Json.Serialize(Model.Resumen.MetodosPagoMasUsados.Select(p => p.TotalMonto)));
+
+            new Chart(ctxPagos, {
+                type: "doughnut",
+                data: {
+                    labels: pagosLabels,
+                    datasets: [{
+                        data: pagosData,
+                        backgroundColor: [
+                            "#ef4444",
+                            "#3b82f6",
+                            "#10b981",
+                            "#f59e0b",
+                            "#8b5cf6"
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: "bottom",
+                            labels: { boxWidth: 12, color: "#3f3f46" }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => {
+                                    const valor = context.raw || 0;
+                                    return `Bs. ${valor}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+}
