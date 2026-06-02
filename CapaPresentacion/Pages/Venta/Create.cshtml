@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model CapaPresentacion.Pages.Venta.CreateModel
 
 <section class="space-y-5">
@@ -209,6 +209,23 @@
 
 @section Scripts {
     <script>
+        // .ToString().ToLower() convierte el "True" de codebehind en "true" de JavaScript
+        const cajaAbierta = @Model.CajaAbierta.ToString().ToLower();
+
+        // Si la caja no está abierta (es false), detenemos al usuario con un mensaje bloqueante
+        if (!cajaAbierta) {
+            Swal.fire({
+                title: 'Caja no abierta',
+                text: 'Debe registrar un monto de apertura de caja antes de realizar una venta',
+                icon: 'warning',
+                confirmButtonColor: '#fa2020',
+                confirmButtonText: 'Entendido',
+                allowOutsideClick: false // Evita que den click fuera para cerrar la alerta
+            }).then(() => {
+                window.location.href = '/ControlCaja/Index';
+            });
+        }
+
         const carrito = [];
         const selectCliente = document.getElementById('selectCliente');
         const metaComerciante = document.getElementById('metaComerciante');

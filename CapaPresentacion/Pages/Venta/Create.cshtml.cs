@@ -14,6 +14,7 @@ namespace CapaPresentacion.Pages.Venta
         private readonly ProductoBLL productoBLL = new ProductoBLL();
         private readonly ClienteBLL clienteBLL = new ClienteBLL();
         private readonly MetodoPagoBLL metodoPagoBLL = new MetodoPagoBLL();
+        private readonly ControlCajaBLL controlCajaBLL = new ControlCajaBLL();
 
         public List<Entidades.Producto> ListaProductos { get; set; } = new List<Entidades.Producto>();
         public List<Entidades.Cliente> ListaClientes { get; set; } = new List<Entidades.Cliente>();
@@ -22,6 +23,8 @@ namespace CapaPresentacion.Pages.Venta
         [BindProperty] public int? ClienteId { get; set; }
         [BindProperty] public bool EnLocal { get; set; }
         [BindProperty] public bool PlatoPrestado { get; set; }
+
+        public bool CajaAbierta { get; set; }
 
         [BindProperty] public List<int> ProductoSeleccionadoId { get; set; } = new List<int>();
         [BindProperty] public List<int> ProductoSeleccionadoCantidad { get; set; } = new List<int>();
@@ -33,6 +36,12 @@ namespace CapaPresentacion.Pages.Venta
         public void OnGet()
         {
             CargarDatos();
+
+            //preguntar si hay una caja abierta-turno activo
+            var caja = controlCajaBLL.ObtenerCajaActiva();
+            // Si la consulta devolvió un registro de caja/true entonces es caja abierta
+            // Si no devolvió, entonces caja cerrada
+            CajaAbierta = (caja != null);
         }
 
         public IActionResult OnPost()
